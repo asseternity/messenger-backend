@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Messenger - Testing</title>
+  </head>
+
+  <body>
+    <% if (user) { %>
+    <h1>Welcome back, <%= user.username %></h1>
+    <a href="/empty">Empty page</a>
+    <% } else { %>
+    <h1>Please sign up or log in</h1>
+    <h2>Sign up</h2>
+    <form action="/sign-up" method="POST">
+      <label for="email">Email</label>
+      <input type="email" id="emaul" name="email" />
+      <label for="username">Username</label>
+      <input type="text" id="username" name="username" />
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" />
+      <label for="cpassword">Confirm password</label>
+      <input type="password" id="cpassword" name="cpassword" />
+      <button>Sign up</button>
+    </form>
+    <h2>Already a member? Log in.</h2>
+    <form action="/log-in" method="POST">
+      <label for="username">Username</label>
+      <input type="text" id="username" name="username" />
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" />
+      <button>Log in</button>
+    </form>
+    <% } %>
+  </body>
+</html>
