@@ -27,7 +27,6 @@ model Message {
   conversation    Conversation  @relation(fields: [conversationId], references: [id])
 }
 
-
 model Conversation {
   id            Int      @id @default(autoincrement())
   createdAt     DateTime @default(now())
@@ -58,3 +57,10 @@ model ConversationUser {
   // { userId: 1, conversationId: Y }
   // { userId: 2, conversationId: Y }
   // { userId: 3, conversationId: Y }
+
+model Session {
+  id        String   @id
+  sid       String   @unique
+  data      String   
+  expiresAt   DateTime
+}

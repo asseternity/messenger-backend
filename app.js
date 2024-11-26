@@ -3,6 +3,16 @@ require("dotenv").config();
 const express = require("express");
 const path = require("node:path");
 const app = express();
+const jwt = require("jsonwebtoken");
+const cors = require("cors");
+
+// cors
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
 
 // settings
 app.set("views", path.join(__dirname, "views"));
@@ -16,17 +26,6 @@ const LocalStrategy = require("passport-local");
 const bcrypt = require("bcryptjs");
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
-const session = require("express-session");
-
-app.use(
-  session({
-    secret: "secret",
-    resave: false,
-    saveUninitialized: true,
-  })
-);
-
-app.use(passport.session());
 
 authUser = async (username, password, done) => {
   try {
@@ -41,7 +40,14 @@ authUser = async (username, password, done) => {
     if (!isMatch) {
       return done(null, false, { message: "Incorrect password" });
     }
-    return done(null, user);
+
+    // User authenticated successfully, now generate a JWT
+    const payload = { username: user.username, id: user.id };
+    const secret = process.env.JWT_SECRET;
+    const options = { expiresIn: "2h" };
+    const token = jwt.sign(payload, secret, options);
+
+    return done(null, user, { token });
   } catch (err) {
     return done(err);
   }
@@ -49,21 +55,24 @@ authUser = async (username, password, done) => {
 
 passport.use(new LocalStrategy(authUser));
 
-passport.serializeUser((userObj, done) => {
-  done(null, userObj);
-});
+app.post("/log-in", (req, res, next) => {
+  passport.authenticate("local", { session: false }, (err, user, info) => {
+    if (err) {
+      return res.status(500).json({ message: "Server error", error: err });
+    }
+    if (!user) {
+      return res.status(401).json({ message: info.message });
+    }
 
-passport.deserializeUser((userObj, done) => {
-  done(null, userObj);
-});
+    const token = info.token;
 
-app.post(
-  "/log-in",
-  passport.authenticate("local", {
-    successRedirect: "/",
-    failureRedirect: "/fail",
-  })
-);
+    return res.status(200).json({
+      message: "Authentication successful",
+      token,
+      username: user.username,
+    });
+  })(req, res, next);
+});
 
 // mount
 const indexRoute = require("./routes/indexRoute");

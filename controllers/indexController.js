@@ -37,9 +37,20 @@ const postSignUp = async (req, res, next) => {
   }
 };
 
+const getAllUsers = async (req, res, next) => {
+  try {
+    const allUsers = await prisma.user.findMany();
+    return res.status(200).json(allUsers);
+  } catch (err) {
+    console.log(err);
+    return next(err);
+  }
+};
+
 module.exports = {
   getIndex,
   getFailure,
   getEmpty,
   postSignUp,
+  getAllUsers,
 };
