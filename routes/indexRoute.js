@@ -1,6 +1,7 @@
 const express = require("express");
 const indexRoute = express.Router();
 const indexController = require("../controllers/indexController");
+const conversationsController = require("../controllers/conversationsController");
 const jwt = require("jsonwebtoken");
 
 const verifyToken = (req, res, next) => {
@@ -27,5 +28,20 @@ indexRoute.get("/fail", indexController.getFailure);
 indexRoute.get("/empty", indexController.getEmpty);
 indexRoute.post("/sign-up", indexController.postSignUp);
 indexRoute.get("/all-users", verifyToken, indexController.getAllUsers);
+indexRoute.post(
+  "/new-chat",
+  verifyToken,
+  conversationsController.postNewConversation
+);
+indexRoute.get(
+  "/:conversationId",
+  verifyToken,
+  conversationsController.getConversationMessages
+);
+indexRoute.post(
+  "/new-message",
+  verifyToken,
+  conversationsController.postNewMessage
+);
 
 module.exports = indexRoute;
