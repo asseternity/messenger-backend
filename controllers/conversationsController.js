@@ -67,15 +67,15 @@ const postNewConversation = async (req, res, next) => {
     );
     if (req.body.participant_usernames.length == 2) {
       const sharedConversation = await doesAConversationExist(
-        participantObjects[0],
-        participantObjects[1]
+        participantObjects[0].id,
+        participantObjects[1].id
       );
       if (sharedConversation) {
         const fullConversation = await prisma.conversation.findUnique({
           where: { id: sharedConversation.id },
           include: {
             participants: true,
-            messages: true,
+            message: true,
           },
         });
         return res.status(201).json(fullConversation);
@@ -84,10 +84,7 @@ const postNewConversation = async (req, res, next) => {
     try {
       // create a conversation in DB
       let conversation = await prisma.conversation.create({
-        data: {
-          participants: [],
-          message: [],
-        },
+        data: {},
       });
       // create conversations for each user
       await Promise.all(
@@ -100,7 +97,7 @@ const postNewConversation = async (req, res, next) => {
         where: { id: conversation.id },
         include: {
           participants: true,
-          messages: true,
+          message: true,
         },
       });
       return res.status(201).json(fullConversation);

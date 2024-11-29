@@ -70,6 +70,7 @@ app.post("/log-in", (req, res, next) => {
       message: "Authentication successful",
       token,
       username: user.username,
+      userId: user.id,
     });
   })(req, res, next);
 });
