@@ -29,14 +29,59 @@ const createConversationUser = async (givenConversationId, givenUserId) => {
   }
 };
 
+const doesAConversationExist = async (userId1, userId2) => {
+  try {
+    // Query ConversationUser for conversations involving userId1
+    const user1Conversations = await prisma.conversationUser.findMany({
+      where: { userId: userId1 },
+      select: { conversationId: true },
+    });
+
+    // Extract conversation IDs for userId1
+    const user1ConversationIds = user1Conversations.map(
+      (entry) => entry.conversationId
+    );
+
+    // Query ConversationUser for a shared conversation with userId2
+    const sharedConversation = await prisma.conversationUser.findFirst({
+      where: {
+        userId: userId2,
+        conversationId: { in: user1ConversationIds },
+      },
+    });
+
+    // If a shared conversation exists, return true; otherwise, false
+    return sharedConversation;
+  } catch (error) {
+    console.error("Error checking conversation existence:", error);
+    throw error; // Rethrow the error to handle it higher up if needed
+  }
+};
+
 const postNewConversation = async (req, res, next) => {
   if (req.body.participant_usernames) {
-    try {
-      let participantUsernames = req.body.participant_usernames;
-      // find user objects in DB
-      let participantObjects = await Promise.all(
-        participantUsernames.map((item) => findUserByUsername(item))
+    let participantUsernames = req.body.participant_usernames;
+    // find user objects in DB
+    let participantObjects = await Promise.all(
+      participantUsernames.map((item) => findUserByUsername(item))
+    );
+    if (req.body.participant_usernames.length == 2) {
+      const sharedConversation = await doesAConversationExist(
+        participantObjects[0],
+        participantObjects[1]
       );
+      if (sharedConversation) {
+        const fullConversation = await prisma.conversation.findUnique({
+          where: { id: sharedConversation.id },
+          include: {
+            participants: true,
+            messages: true,
+          },
+        });
+        return res.status(201).json(fullConversation);
+      }
+    }
+    try {
       // create a conversation in DB
       let conversation = await prisma.conversation.create({
         data: {
