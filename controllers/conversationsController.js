@@ -32,21 +32,28 @@ const createConversationUser = async (givenConversationId, givenUserId) => {
 const doesAConversationExist = async (userId1, userId2) => {
   try {
     // Query ConversationUser for conversations involving userId1
-    const user1Conversations = await prisma.conversationUser.findMany({
+    const user1ConversationUsers = await prisma.conversationUser.findMany({
       where: { userId: userId1 },
       select: { conversationId: true },
     });
 
     // Extract conversation IDs for userId1
-    const user1ConversationIds = user1Conversations.map(
+    const user1ConversationIds = user1ConversationUsers.map(
       (entry) => entry.conversationId
     );
 
     // Query ConversationUser for a shared conversation with userId2
-    const sharedConversation = await prisma.conversationUser.findFirst({
+    const sharedConversationUser = await prisma.conversationUser.findFirst({
       where: {
         userId: userId2,
         conversationId: { in: user1ConversationIds },
+      },
+    });
+
+    // Now grab Conversation objects based on the shared conversationUser
+    const sharedConversation = await prisma.conversation.findUnique({
+      where: {
+        id: sharedConversationUser.conversationId,
       },
     });
 
