@@ -11,8 +11,6 @@ const verifyToken = (req, res, next) => {
     return res.status(403).json({ message: "No token provided" });
   }
 
-  console.log("Token received:", token);
-
   jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
     if (err) {
       console.log("Token verification failed:", err);
@@ -42,6 +40,16 @@ indexRoute.post(
   "/new-message",
   verifyToken,
   conversationsController.postNewMessage
+);
+indexRoute.post(
+  "/group-chats",
+  verifyToken,
+  conversationsController.postGroupChatsOfAUser
+);
+indexRoute.get(
+  "/conversation/:conversationId",
+  verifyToken,
+  conversationsController.getConversationById
 );
 
 module.exports = indexRoute;

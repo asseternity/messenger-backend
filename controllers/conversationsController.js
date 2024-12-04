@@ -164,8 +164,54 @@ const postNewMessage = async (req, res, next) => {
   }
 };
 
+const postGroupChatsOfAUser = async (req, res, next) => {
+  let userId = parseInt(req.body.userId);
+  try {
+    // find all conversations the user participates in
+    let allChats = await prisma.conversation.findMany({
+      where: {
+        participants: {
+          some: {
+            userId: userId,
+          },
+        },
+      },
+      include: {
+        participants: true,
+      },
+    });
+
+    // filter out non-groupchats
+    let groupChats = allChats.filter((item) => item.participants.length > 2);
+    return res.status(200).json(groupChats);
+  } catch (err) {
+    return next(err);
+  }
+};
+
+const getConversationById = async (req, res, next) => {
+  try {
+    const conversationId = req.params.conversationId;
+    const conversationObject = await prisma.conversation.findUnique({
+      where: {
+        id: conversationId,
+      },
+      include: {
+        message: true,
+        participants: true,
+      },
+    });
+    return res.status(200).json(conversationObject);
+  } catch (err) {
+    console.log(err);
+    return next(err);
+  }
+};
+
 module.exports = {
   postNewConversation,
   getConversationMessages,
   postNewMessage,
+  postGroupChatsOfAUser,
+  getConversationById,
 };
