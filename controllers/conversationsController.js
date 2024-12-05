@@ -178,6 +178,7 @@ const postGroupChatsOfAUser = async (req, res, next) => {
       },
       include: {
         participants: true,
+        message: true,
       },
     });
 
