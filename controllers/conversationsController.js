@@ -50,6 +50,11 @@ const doesAConversationExist = async (userId1, userId2) => {
       },
     });
 
+    // Check if a shared conversation was found
+    if (!sharedConversationUser) {
+      return null; // No shared conversation exists
+    }
+
     // Now grab Conversation objects based on the shared conversationUser
     const sharedConversation = await prisma.conversation.findUnique({
       where: {
