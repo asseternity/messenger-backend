@@ -9,7 +9,7 @@ const cors = require("cors");
 // cors
 app.use(
   cors({
-    origin: "https://asseternity.github.io",
+    origin: ["https://asseternity.github.io", "http://localhost:5173"],
     credentials: true,
   })
 );
