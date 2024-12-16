@@ -1,3 +1,20 @@
+//Example Breakdown with User1, User2, and User3:
+// 1-on-1 Conversations:
+
+// When User1 starts a conversation with User2, a new Conversation record is created.
+// Two ConversationUser entries are created:
+  // { userId: 1, conversationId: X }
+  // { userId: 2, conversationId: X }
+
+// Group Chat with All Users:
+  // When User1, User2, and User3 join a group conversation:
+  // A new Conversation is created for the group.
+  // Three ConversationUser entries are created:
+  // { userId: 1, conversationId: Y }
+  // { userId: 2, conversationId: Y }
+  // { userId: 3, conversationId: Y }
+
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -15,6 +32,34 @@ model User {
   createdAt     DateTime  @default(now())
   messages      Message[]
   conversations ConversationUser[]
+  profilePicture String?
+  bio           String?
+  following     Int[]
+  posts         Post[]
+  comments      Comment[]
+}
+
+model Post {
+  id            Int      @id @default(autoincrement())
+  content       String
+  createdAt     DateTime @default(now())
+  authorId      Int
+  author        User     @relation(fields: [authorId], references: [id])
+  comments      Comment[]
+  // Array of user IDs who liked the post
+  likes         Int[]   
+}
+
+model Comment {
+  id            Int      @id @default(autoincrement())
+  content       String
+  createdAt     DateTime @default(now())
+  authorId      Int
+  postId        Int
+  author        User     @relation(fields: [authorId], references: [id])
+  post          Post     @relation(fields: [postId], references: [id])
+  // Array of user IDs who liked the comment
+  likes         Int[]    
 }
 
 model Message {
@@ -41,22 +86,6 @@ model ConversationUser {
   conversationId  Int
   conversation    Conversation  @relation(fields: [conversationId], references: [id])
 }
-
-//Example Breakdown with User1, User2, and User3:
-// 1-on-1 Conversations:
-
-// When User1 starts a conversation with User2, a new Conversation record is created.
-// Two ConversationUser entries are created:
-  // { userId: 1, conversationId: X }
-  // { userId: 2, conversationId: X }
-
-// Group Chat with All Users:
-  // When User1, User2, and User3 join a group conversation:
-  // A new Conversation is created for the group.
-  // Three ConversationUser entries are created:
-  // { userId: 1, conversationId: Y }
-  // { userId: 2, conversationId: Y }
-  // { userId: 3, conversationId: Y }
 
 model Session {
   id        String   @id
