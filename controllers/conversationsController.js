@@ -214,10 +214,47 @@ const getConversationById = async (req, res, next) => {
   }
 };
 
+const postSearchConversationUsers = async (req, res, next) => {
+  try {
+    const myUserId = parseInt(req.body.myUserId);
+    const searchString = req.body.searchString || "";
+    const conversationUsers = await prisma.conversationUser.findMany({
+      where: {
+        userId: myUserId,
+      },
+      include: {
+        conversation: {
+          include: {
+            participants: {
+              include: {
+                user: true, // Include user details (e.g., username)
+              },
+            },
+          },
+        },
+      },
+    });
+    const filteredConversations = conversationUsers
+      .map((cu) => cu.conversation) // Extract the conversations
+      .filter((conversation) => {
+        const usernameMatch = conversation.participants.some((participant) =>
+          participant.user.username
+            .toLowerCase()
+            .includes(searchString.toLowerCase())
+        );
+        return usernameMatch;
+      });
+    res.json({ conversations: filteredConversations });
+  } catch (err) {
+    return next(err);
+  }
+};
+
 module.exports = {
   postNewConversation,
   getConversationMessages,
   postNewMessage,
   postGroupChatsOfAUser,
   getConversationById,
+  postSearchConversationUsers,
 };

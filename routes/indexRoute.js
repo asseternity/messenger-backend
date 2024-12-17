@@ -2,6 +2,9 @@ const express = require("express");
 const indexRoute = express.Router();
 const indexController = require("../controllers/indexController");
 const conversationsController = require("../controllers/conversationsController");
+const profileController = require("../controllers/profileController");
+const postsController = require("../controllers/postsController");
+const commentsController = require("../controllers/commentsController");
 const jwt = require("jsonwebtoken");
 
 const verifyToken = (req, res, next) => {
