@@ -54,5 +54,51 @@ indexRoute.get(
   verifyToken,
   conversationsController.getConversationById
 );
+indexRoute.post(
+  "/users_conversations",
+  verifyToken,
+  conversationsController.postSearchConversationUsers
+);
+
+// posts routes
+indexRoute.post("/new_post", verifyToken, postsController.postWriteAPost);
+indexRoute.post("/update_post", verifyToken, postsController.updateEditAPost);
+indexRoute.post("/like_post", verifyToken, postsController.postLikeAPost);
+indexRoute.post(
+  "/get_feed",
+  verifyToken,
+  postsController.postGetPostsOfFollows
+);
+indexRoute.post("/delete_post", verifyToken, postsController.deletePost);
+
+// comments routes
+indexRoute.post(
+  "/new_comment",
+  verifyToken,
+  commentsController.postWriteAComment
+);
+indexRoute.post(
+  "/like_comment",
+  verifyToken,
+  commentsController.postLikeAComment
+);
+indexRoute.post(
+  "/delete_comment",
+  verifyToken,
+  commentsController.deleteComment
+);
+
+// profile routes
+indexRoute.get(
+  "/user_data/:targetUserId",
+  verifyToken,
+  profileController.getUserDataById
+);
+indexRoute.post(
+  "/update_profile",
+  verifyToken,
+  profileController.updateUserProfile
+);
+indexRoute.post("/follow", verifyToken, profileController.postFollowUnfollow);
 
 module.exports = indexRoute;
