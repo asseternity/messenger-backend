@@ -71,6 +71,8 @@ app.post("/log-in", (req, res, next) => {
       token,
       username: user.username,
       userId: user.id,
+      profilePicture: user.profilePicture,
+      bio: user.bio,
     });
   })(req, res, next);
 });
