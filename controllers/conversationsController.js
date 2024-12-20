@@ -11,7 +11,7 @@ const findUserByUsername = async (givenUsername) => {
     });
     return user;
   } catch (err) {
-    return next(err);
+    console.log(err);
   }
 };
 
@@ -25,7 +25,7 @@ const createConversationUser = async (givenConversationId, givenUserId) => {
     });
     return conversationUser;
   } catch (err) {
-    return next(err);
+    console.log(err);
   }
 };
 
