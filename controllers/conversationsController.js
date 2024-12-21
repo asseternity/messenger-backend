@@ -197,7 +197,7 @@ const postGroupChatsOfAUser = async (req, res, next) => {
 
 const getConversationById = async (req, res, next) => {
   try {
-    const conversationId = req.params.conversationId;
+    const conversationId = parseInt(req.params.conversationId);
     const conversationObject = await prisma.conversation.findUnique({
       where: {
         id: conversationId,
