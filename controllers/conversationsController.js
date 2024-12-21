@@ -218,6 +218,8 @@ const postSearchConversationUsers = async (req, res, next) => {
   try {
     const myUserId = parseInt(req.body.myUserId);
     const searchString = req.body.searchString || "";
+
+    // Fetch all conversations involving myUserId
     const conversationUsers = await prisma.conversationUser.findMany({
       where: {
         userId: myUserId,
@@ -234,6 +236,8 @@ const postSearchConversationUsers = async (req, res, next) => {
         },
       },
     });
+
+    // Filter conversations based on the searchString
     const filteredConversations = conversationUsers
       .map((cu) => cu.conversation) // Extract the conversations
       .filter((conversation) => {
@@ -244,7 +248,51 @@ const postSearchConversationUsers = async (req, res, next) => {
         );
         return usernameMatch;
       });
-    res.json({ conversations: filteredConversations });
+
+    // Extract Conversation IDs from filtered conversations
+    const filteredConversationIds = filteredConversations.map(
+      (conv) => conv.id
+    );
+
+    // Fetch all conversation objects whose IDs are in filteredConversations
+    const conversationObjects = await prisma.conversation.findMany({
+      where: {
+        id: {
+          in: filteredConversationIds,
+        },
+      },
+      include: {
+        participants: {
+          include: {
+            user: true, // Include user details
+          },
+        },
+        message: true, // Include messages in the conversation
+      },
+    });
+
+    // Fetch all users excluding myUserId
+    const allOtherUsers = await prisma.user.findMany({
+      where: {
+        id: {
+          not: myUserId,
+        },
+      },
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        profilePicture: true,
+        bio: true,
+      },
+    });
+
+    // Respond with the required data
+    res.json({
+      conversations: filteredConversations, // Conversations matching the search string
+      conversationObjects, // Full conversation objects
+      allOtherUsers, // All other users excluding myUserId
+    });
   } catch (err) {
     return next(err);
   }
