@@ -214,10 +214,9 @@ const getConversationById = async (req, res, next) => {
   }
 };
 
-const postSearchConversationUsers = async (req, res, next) => {
+const postConversationsOfAUser = async (req, res, next) => {
   try {
     const myUserId = parseInt(req.body.myUserId);
-    const searchString = req.body.searchString || "";
 
     // Fetch all conversations involving myUserId
     const conversationUsers = await prisma.conversationUser.findMany({
@@ -237,22 +236,8 @@ const postSearchConversationUsers = async (req, res, next) => {
       },
     });
 
-    // Filter conversations based on the searchString
-    const filteredConversations = conversationUsers
-      .map((cu) => cu.conversation) // Extract the conversations
-      .filter((conversation) => {
-        const usernameMatch = conversation.participants.some((participant) =>
-          participant.user.username
-            .toLowerCase()
-            .includes(searchString.toLowerCase())
-        );
-        return usernameMatch;
-      });
-
     // Extract Conversation IDs from filtered conversations
-    const filteredConversationIds = filteredConversations.map(
-      (conv) => conv.id
-    );
+    const filteredConversationIds = conversationUsers.map((conv) => conv.id);
 
     // Fetch all conversation objects whose IDs are in filteredConversations
     const conversationObjects = await prisma.conversation.findMany({
@@ -289,7 +274,6 @@ const postSearchConversationUsers = async (req, res, next) => {
 
     // Respond with the required data
     res.json({
-      conversations: filteredConversations, // Conversations matching the search string
       conversationObjects: conversationObjects, // Full conversation objects
       allOtherUsers: allOtherUsers, // All other users excluding myUserId
     });
@@ -304,5 +288,5 @@ module.exports = {
   postNewMessage,
   postGroupChatsOfAUser,
   getConversationById,
-  postSearchConversationUsers,
+  postConversationsOfAUser,
 };

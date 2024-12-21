@@ -57,7 +57,7 @@ indexRoute.get(
 indexRoute.post(
   "/users_conversations",
   verifyToken,
-  conversationsController.postSearchConversationUsers
+  conversationsController.postConversationsOfAUser
 );
 
 // posts routes
