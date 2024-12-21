@@ -290,8 +290,8 @@ const postSearchConversationUsers = async (req, res, next) => {
     // Respond with the required data
     res.json({
       conversations: filteredConversations, // Conversations matching the search string
-      conversationObjects, // Full conversation objects
-      allOtherUsers, // All other users excluding myUserId
+      conversationObjects: conversationObjects, // Full conversation objects
+      allOtherUsers: allOtherUsers, // All other users excluding myUserId
     });
   } catch (err) {
     return next(err);
