@@ -102,7 +102,15 @@ const postGetPostsOfFollows = async (req, res, next) => {
       where: {
         authorId: { in: followingIds }, // Fetch posts by authors the user follows
       },
-      include: { comments: true },
+      include: {
+        comments: true,
+        author: {
+          // Include the author details
+          select: {
+            username: true, // Only select the 'username' field (you can select more fields if needed)
+          },
+        },
+      },
       orderBy: { createdAt: "desc" }, // Optional: Sort posts by newest first
       skip: (page - 1) * pageSize, // Skip posts for pagination
       take: pageSize, // Limit the number of posts
