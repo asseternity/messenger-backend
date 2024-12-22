@@ -70,6 +70,7 @@ indexRoute.post(
   postsController.postGetPostsOfFollows
 );
 indexRoute.post("/delete_post", verifyToken, postsController.deletePost);
+indexRoute.post("/users_posts", verifyToken, postsController.postGetUsersPosts);
 
 // comments routes
 indexRoute.post(

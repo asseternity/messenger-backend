@@ -93,7 +93,7 @@ const postGetPostsOfFollows = async (req, res, next) => {
     if (!myUserObject) {
       return res.status(404).json({ error: "User not found" });
     }
-    const followingIds = myUserObject.following;
+    const followingIds = [...myUserObject.following, myUserId];
     if (!followingIds || followingIds.length === 0) {
       return res.status(200).json([]);
     }
@@ -132,10 +132,23 @@ const deletePost = async (req, res, next) => {
   }
 };
 
+const postGetUsersPosts = async (req, res, next) => {
+  try {
+    const targetUserId = parseInt(req.body.targetUserId);
+    const usersPosts = await prisma.post.findMany({
+      where: { authorId: targetUserId },
+    });
+    return res.status(200).json(usersPosts);
+  } catch (err) {
+    return next(err);
+  }
+};
+
 module.exports = {
   postWriteAPost,
   updateEditAPost,
   postLikeAPost,
   postGetPostsOfFollows,
   deletePost,
+  postGetUsersPosts,
 };
