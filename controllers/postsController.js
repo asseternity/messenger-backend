@@ -107,7 +107,8 @@ const postGetPostsOfFollows = async (req, res, next) => {
         author: {
           // Include the author details
           select: {
-            username: true, // Only select the 'username' field (you can select more fields if needed)
+            username: true, // Select the 'username' field (you can select more fields if needed)
+            profilePicture: true,
           },
         },
       },
