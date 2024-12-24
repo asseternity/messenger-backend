@@ -103,11 +103,19 @@ const postGetPostsOfFollows = async (req, res, next) => {
         authorId: { in: followingIds }, // Fetch posts by authors the user follows
       },
       include: {
-        comments: true,
+        comments: {
+          include: {
+            author: {
+              select: {
+                username: true,
+                profilePicture: true,
+              },
+            },
+          },
+        },
         author: {
-          // Include the author details
           select: {
-            username: true, // Select the 'username' field (you can select more fields if needed)
+            username: true,
             profilePicture: true,
           },
         },
