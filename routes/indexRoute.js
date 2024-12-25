@@ -101,5 +101,10 @@ indexRoute.post(
   profileController.updateUserProfile
 );
 indexRoute.post("/follow", verifyToken, profileController.postFollowUnfollow);
+indexRoute.post(
+  "/search_username",
+  verifyToken,
+  profileController.postSearchByUsername
+);
 
 module.exports = indexRoute;

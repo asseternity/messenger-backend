@@ -98,4 +98,26 @@ const postFollowUnfollow = async (req, res, next) => {
   }
 };
 
-module.exports = { getUserDataById, updateUserProfile, postFollowUnfollow };
+const postSearchByUsername = async (req, res, next) => {
+  const targetUsername = req.body.targetUsername;
+  try {
+    const targetUser = await prisma.user.findMany({
+      where: {
+        username: {
+          contains: targetUsername,
+          mode: "insensitive",
+        },
+      },
+    });
+    return res.status(200).send(targetUser);
+  } catch (err) {
+    return next(err);
+  }
+};
+
+module.exports = {
+  getUserDataById,
+  updateUserProfile,
+  postFollowUnfollow,
+  postSearchByUsername,
+};
