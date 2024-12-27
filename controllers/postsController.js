@@ -154,6 +154,24 @@ const postGetUsersPosts = async (req, res, next) => {
     const targetUserId = parseInt(req.body.targetUserId);
     const usersPosts = await prisma.post.findMany({
       where: { authorId: targetUserId },
+      include: {
+        comments: {
+          include: {
+            author: {
+              select: {
+                username: true,
+                profilePicture: true,
+              },
+            },
+          },
+        },
+        author: {
+          select: {
+            username: true,
+            profilePicture: true,
+          },
+        },
+      },
     });
     return res.status(200).json(usersPosts);
   } catch (err) {
