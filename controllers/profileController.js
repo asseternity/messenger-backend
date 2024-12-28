@@ -44,9 +44,9 @@ const updateUserProfile = async (req, res, next) => {
     await prisma.user.update({
       where: { id: myUserId },
       data: {
-        bio,
-        profilePicture,
-        username,
+        bio: newBio,
+        profilePicture: newProfilePic,
+        username: newUsername,
       },
     });
     return res
