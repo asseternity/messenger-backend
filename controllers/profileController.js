@@ -41,7 +41,7 @@ const updateUserProfile = async (req, res, next) => {
       }
     }
     // Update the user
-    await prisma.user.update({
+    const updatedUser = await prisma.user.update({
       where: { id: myUserId },
       data: {
         bio: newBio,
@@ -49,9 +49,7 @@ const updateUserProfile = async (req, res, next) => {
         username: newUsername,
       },
     });
-    return res
-      .status(200)
-      .json({ message: "User profile updated successfully" });
+    return res.status(200).json(updatedUser);
   } catch (err) {
     return next(err);
   }
