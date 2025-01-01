@@ -65,7 +65,6 @@ const postFollowUnfollow = async (req, res, next) => {
     // check if I am following them
     const myUserObject = await prisma.user.findUnique({
       where: { id: myUserId },
-      include: { following: true },
     });
     const amFollowing = myUserObject.following.includes(targetUserId);
     // if I am, unfollow
