@@ -63,13 +63,13 @@ const postFollowUnfollow = async (req, res, next) => {
     const myUserId = parseInt(req.body.myUserId);
     const targetUserId = parseInt(req.body.targetUserId);
     // check if I am following them
-    const myUserObject = await prisma.user.findUnique({
+    let myUserObject = await prisma.user.findUnique({
       where: { id: myUserId },
     });
     const amFollowing = myUserObject.following.includes(targetUserId);
     // if I am, unfollow
     if (amFollowing) {
-      await prisma.user.update({
+      myUserObject = await prisma.user.update({
         where: { id: myUserId },
         data: {
           following: {
@@ -80,7 +80,7 @@ const postFollowUnfollow = async (req, res, next) => {
       });
       return res.status(200).send({ message: "Unfollowed successfully" });
     } else {
-      await prisma.user.update({
+      myUserObject = await prisma.user.update({
         where: { id: myUserId },
         data: {
           following: {
@@ -89,7 +89,7 @@ const postFollowUnfollow = async (req, res, next) => {
           },
         },
       });
-      return res.status(200).send({ message: "Followed successfully" });
+      return res.status(200).send(myUserObject);
     }
     // if I am not, follow
   } catch (err) {
