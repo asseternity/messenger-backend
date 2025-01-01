@@ -237,7 +237,9 @@ const postConversationsOfAUser = async (req, res, next) => {
     });
 
     // Extract Conversation IDs from filtered conversations
-    const filteredConversationIds = conversationUsers.map((conv) => conv.id);
+    const filteredConversationIds = conversationUsers.map(
+      (conv) => conv.conversationId
+    );
 
     // Fetch all conversation objects whose IDs are in filteredConversations
     const conversationObjects = await prisma.conversation.findMany({
