@@ -78,7 +78,7 @@ const postFollowUnfollow = async (req, res, next) => {
           },
         },
       });
-      return res.status(200).send({ message: "Unfollowed successfully" });
+      return res.status(200).send(myUserObject);
     } else {
       myUserObject = await prisma.user.update({
         where: { id: myUserId },
