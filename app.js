@@ -74,6 +74,7 @@ app.post("/log-in", (req, res, next) => {
       id: user.id,
       profilePicture: user.profilePicture,
       bio: user.bio,
+      following: user.following,
     });
   })(req, res, next);
 });
