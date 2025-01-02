@@ -20,9 +20,6 @@ app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// Serve static files from the "uploads" directory
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-
 // passport
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
