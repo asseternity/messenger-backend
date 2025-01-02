@@ -109,8 +109,6 @@ const postGetPostsOfFollows = async (req, res, next) => {
               select: {
                 username: true,
                 profilePicture: true,
-                bio: true,
-                id: true,
               },
             },
           },
