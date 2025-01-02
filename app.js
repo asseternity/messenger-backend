@@ -84,7 +84,7 @@ const indexRoute = require("./routes/indexRoute");
 const uploadRoute = require("./routes/uploadRoute");
 
 app.use("/", indexRoute);
-app.use("/upload/", uploadRoute);
+app.use("/upload", uploadRoute);
 
 // launch
 const port = process.env.PORT || 3000;
