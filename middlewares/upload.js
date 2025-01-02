@@ -1,17 +1,7 @@
 const multer = require("multer");
-const path = require("path");
-const { v4: uuidv4 } = require("uuid");
 
 // Set up storage engine
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads/"); // Directory to store uploaded files
-  },
-  filename: (req, file, cb) => {
-    const uniqueName = `${uuidv4()}${path.extname(file.originalname)}`;
-    cb(null, uniqueName); // Create unique filenames
-  },
-});
+const storage = multer.memoryStorage();
 
 // File filter to allow only specific file types
 const fileFilter = (req, file, cb) => {
