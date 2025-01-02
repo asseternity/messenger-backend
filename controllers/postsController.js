@@ -151,9 +151,7 @@ const deletePost = async (req, res, next) => {
 
 const postGetUsersPosts = async (req, res, next) => {
   try {
-    console.log(req.body);
     const targetUserId = parseInt(req.body.targetUserId);
-    console.log(targetUserId);
     const usersPosts = await prisma.post.findMany({
       where: { authorId: targetUserId },
       include: {
