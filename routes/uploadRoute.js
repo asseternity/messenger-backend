@@ -1,6 +1,8 @@
 const upload = require("../middlewares/upload");
 const express = require("express");
 const uploadRoute = express.Router();
+const { PrismaClient } = require("@prisma/client");
+const prisma = new PrismaClient();
 
 uploadRoute.post(
   "/upload-profile-pic",
