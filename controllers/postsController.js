@@ -126,8 +126,13 @@ const postGetPostsOfFollows = async (req, res, next) => {
       skip: (page - 1) * pageSize, // Skip posts for pagination
       take: pageSize, // Limit the number of posts
     });
-
-    return res.status(200).json(postsToServe);
+    const usersToServe = await prisma.user.findMany({
+      select: {
+        profilePicture: true,
+        id: true,
+      },
+    });
+    return res.status(200).json({ post: postsToServe, users: usersToServe });
   } catch (err) {
     console.error("Error fetching posts:", err);
     return next(err);
