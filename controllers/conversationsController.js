@@ -98,12 +98,22 @@ const postNewConversation = async (req, res, next) => {
       let conversation = await prisma.conversation.create({
         data: {},
       });
-      // create conversations for each user
-      await Promise.all(
-        participantObjects.map((item) =>
-          createConversationUser(conversation.id, item.id)
-        )
-      );
+      // create conversations for each user if groupchat
+      if (req.body.participant_usernames.length > 2) {
+        await Promise.all(
+          participantObjects.map((item) =>
+            createConversationUser(conversation.id, item.id)
+          )
+        );
+      }
+      // send a starting message in the conversation
+      await prisma.message.create({
+        data: {
+          conversationId: conversation.id,
+          senderId: participantObjects[participantObjects.length - 1].id,
+          content: "Groupchat created",
+        },
+      });
       // Fetch and return the full conversation (including participants)
       const fullConversation = await prisma.conversation.findUnique({
         where: { id: conversation.id },
