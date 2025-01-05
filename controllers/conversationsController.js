@@ -316,12 +316,12 @@ const postConversationsOfAUser2 = async (req, res, next) => {
         },
       },
       include: {
-        message: true,
-      },
-      participants: {
-        include: {
-          user: true, // Include user details
+        participants: {
+          include: {
+            user: true, // Include user details
+          },
         },
+        message: true, // Include messages in the conversation
       },
     });
     const conversationsWithMessages = conversations.filter(
