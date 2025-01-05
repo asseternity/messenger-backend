@@ -327,6 +327,7 @@ const postConversationsOfAUser2 = async (req, res, next) => {
     const conversationsWithMessages = conversations.filter(
       (conv) => conv.message.length > 0
     );
+    console.log(conversationsWithMessages);
     const allOtherUsers = await prisma.user.findMany({
       where: {
         id: {
