@@ -86,11 +86,7 @@ const postNewConversation = async (req, res, next) => {
         const fullConversation = await prisma.conversation.findUnique({
           where: { id: sharedConversation.id },
           include: {
-            participants: {
-              include: {
-                user: true, // Include user details (e.g., username)
-              },
-            },
+            participants: true,
             message: true,
           },
         });
@@ -112,7 +108,11 @@ const postNewConversation = async (req, res, next) => {
       const fullConversation = await prisma.conversation.findUnique({
         where: { id: conversation.id },
         include: {
-          participants: true,
+          participants: {
+            include: {
+              user: true, // Include user details (e.g., username)
+            },
+          },
           message: true,
         },
       });
