@@ -298,6 +298,53 @@ const postConversationsOfAUser = async (req, res, next) => {
   }
 };
 
+const postConversationsOfAUser2 = async (req, res, next) => {
+  try {
+    const myUserId = parseInt(req.body.myUserId);
+    const conversationUsers = await prisma.conversationUser.findMany({
+      where: {
+        userId: myUserId,
+      },
+    });
+    const conversationIds = conversationUsers.map(
+      (conv) => conv.conversationId
+    );
+    const conversations = await prisma.conversation.findMany({
+      where: {
+        id: {
+          in: conversationIds,
+        },
+      },
+      include: {
+        message: true,
+      },
+    });
+    const conversationsWithMessages = conversations.filter(
+      (conv) => conv.message.length > 0
+    );
+    const allOtherUsers = await prisma.user.findMany({
+      where: {
+        id: {
+          not: myUserId,
+        },
+      },
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        profilePicture: true,
+        bio: true,
+      },
+    });
+    res.json({
+      conversationObjects: conversationsWithMessages,
+      allOtherUsers: allOtherUsers,
+    });
+  } catch (err) {
+    return next(err);
+  }
+};
+
 module.exports = {
   postNewConversation,
   getConversationMessages,
@@ -305,4 +352,5 @@ module.exports = {
   postGroupChatsOfAUser,
   getConversationById,
   postConversationsOfAUser,
+  postConversationsOfAUser2,
 };
