@@ -12,7 +12,19 @@ const postWriteAPost = async (req, res, next) => {
         authorId: myUserId,
       },
     });
-    return res.status(201).json(newPost);
+    const newPostToServe = await prisma.post.findUnique({
+      where: { id: newPost },
+      include: {
+        author: {
+          select: {
+            username: true,
+            profilePicture: true,
+          },
+        },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+    return res.status(201).json(newPostToServe);
   } catch (err) {
     return next(err);
   }
