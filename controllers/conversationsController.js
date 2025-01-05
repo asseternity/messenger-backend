@@ -324,10 +324,6 @@ const postConversationsOfAUser2 = async (req, res, next) => {
         message: true, // Include messages in the conversation
       },
     });
-    const conversationsWithMessages = conversations.filter(
-      (conv) => conv.message.length > 0
-    );
-    console.log(conversationsWithMessages);
     const allOtherUsers = await prisma.user.findMany({
       where: {
         id: {
@@ -343,7 +339,7 @@ const postConversationsOfAUser2 = async (req, res, next) => {
       },
     });
     res.json({
-      conversationObjects: conversationsWithMessages,
+      conversationObjects: conversations,
       allOtherUsers: allOtherUsers,
     });
   } catch (err) {
