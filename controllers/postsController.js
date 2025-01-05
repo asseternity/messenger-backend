@@ -13,7 +13,7 @@ const postWriteAPost = async (req, res, next) => {
       },
     });
     const newPostToServe = await prisma.post.findUnique({
-      where: { id: newPost },
+      where: { id: newPost.id },
       include: {
         author: {
           select: {
