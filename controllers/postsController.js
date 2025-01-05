@@ -181,7 +181,13 @@ const postGetUsersPosts = async (req, res, next) => {
       },
       orderBy: { createdAt: "desc" },
     });
-    return res.status(200).json(usersPosts);
+    const allUsers = await prisma.user.findMany({
+      select: {
+        profilePicture: true,
+        id: true,
+      },
+    });
+    return res.status(200).json({ post: usersPosts, users: allUsers });
   } catch (err) {
     return next(err);
   }
