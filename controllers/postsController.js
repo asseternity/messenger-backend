@@ -22,7 +22,6 @@ const postWriteAPost = async (req, res, next) => {
           },
         },
       },
-      orderBy: { createdAt: "desc" },
     });
     return res.status(201).json(newPostToServe);
   } catch (err) {
