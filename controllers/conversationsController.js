@@ -318,6 +318,11 @@ const postConversationsOfAUser2 = async (req, res, next) => {
       include: {
         message: true,
       },
+      participants: {
+        include: {
+          user: true, // Include user details
+        },
+      },
     });
     const conversationsWithMessages = conversations.filter(
       (conv) => conv.message.length > 0
