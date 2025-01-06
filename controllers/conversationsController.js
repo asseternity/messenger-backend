@@ -42,42 +42,43 @@ const doesAConversationExist = async (userId1, userId2) => {
       (entry) => entry.conversationId
     );
 
-    // Filter out group chats: find conversations with exactly 2 participants
-    const twoParticipantConversations = await prisma.conversation.findMany({
-      where: {
-        id: { in: user1ConversationIds },
-        participants: { equals: 2 }, // Assuming `participants` is an aggregate field
-      },
-      select: { id: true },
-    });
-
-    // Extract conversation IDs for two-participant conversations
-    const twoParticipantConversationIds = twoParticipantConversations.map(
-      (conversation) => conversation.id
-    );
-
-    // Query ConversationUser for a shared conversation with userId2
-    const sharedConversationUser = await prisma.conversationUser.findFirst({
+    // Find all conversations where both users participate
+    const sharedConversationUser = await prisma.conversationUser.findMany({
       where: {
         userId: userId2,
-        conversationId: { in: twoParticipantConversationIds },
+        conversationId: { in: user1ConversationIds },
       },
     });
 
-    // Check if a shared conversation was found
-    if (!sharedConversationUser) {
-      return null; // No shared conversation exists
+    // Extract the conversation IDs from sharedConversationUser
+    const sharedConversationIds = sharedConversationUser.map(
+      (entry) => entry.conversationId
+    );
+
+    // Fetch all conversations with participants
+    const conversations = await prisma.conversation.findMany({
+      include: {
+        participants: true, // Include participants to count them
+      },
+    });
+
+    // Filter conversations with exactly 2 participants
+    const filteredConversations = conversations.filter(
+      (conversation) => conversation.participants.length === 2
+    );
+
+    // Check if any of sharedConversationIds is in the filteredConversations
+    const finalConversation = filteredConversations.filter((conversation) =>
+      sharedConversationIds.includes(conversation.id)
+    );
+
+    // If no shared conversation exists, return null
+    if (finalConversation.length === 0) {
+      return null;
     }
 
-    // Now grab Conversation objects based on the shared conversationUser
-    const sharedConversation = await prisma.conversation.findUnique({
-      where: {
-        id: sharedConversationUser.conversationId,
-      },
-    });
-
-    // If a shared conversation exists, return it; otherwise, return null
-    return sharedConversation;
+    // Return the first matching conversation (or handle multiple matches as needed)
+    return finalConversation[0];
   } catch (error) {
     console.error("Error checking conversation existence:", error);
     throw error; // Rethrow the error to handle it higher up if needed
