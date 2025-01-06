@@ -31,59 +31,90 @@ const createConversationUser = async (givenConversationId, givenUserId) => {
 
 const doesAConversationExist = async (userId1, userId2) => {
   try {
-    // Query ConversationUser for conversations involving userId1
-    const user1ConversationUsers = await prisma.conversationUser.findMany({
-      where: { userId: userId1 },
-      select: { conversationId: true },
-    });
-
-    // Extract conversation IDs for userId1
-    const user1ConversationIds = user1ConversationUsers.map(
-      (entry) => entry.conversationId
-    );
-
-    // Find all conversations where both users participate
-    const sharedConversationUser = await prisma.conversationUser.findMany({
+    // Fetch conversations where both user1 and user2 are participants, ensuring exactly 2 participants
+    const conversation = await prisma.conversation.findFirst({
       where: {
-        userId: userId2,
-        conversationId: { in: user1ConversationIds },
+        participants: {
+          some: {
+            userId: userId1, // Check if userId1 is part of the conversation
+          },
+          some: {
+            userId: userId2, // Check if userId2 is part of the conversation
+          },
+        },
       },
-    });
-
-    // Extract the conversation IDs from sharedConversationUser
-    const sharedConversationIds = sharedConversationUser.map(
-      (entry) => entry.conversationId
-    );
-
-    // Fetch all conversations with participants
-    const conversations = await prisma.conversation.findMany({
       include: {
-        participants: true, // Include participants to count them
+        participants: true, // Include participants to ensure both users are in the conversation
       },
     });
 
-    // Filter conversations with exactly 2 participants
-    const filteredConversations = conversations.filter(
-      (conversation) => conversation.participants.length === 2
-    );
-
-    // Check if any of sharedConversationIds is in the filteredConversations
-    const finalConversation = filteredConversations.filter((conversation) =>
-      sharedConversationIds.includes(conversation.id)
-    );
-
-    // If no shared conversation exists, return null
-    if (finalConversation.length === 0) {
-      return null;
+    // Check if the conversation has exactly 2 participants
+    if (conversation && conversation.participants.length === 2) {
+      return conversation; // Return the conversation if both users are present and it's a 2-participant conversation
     }
 
-    // Return the first matching conversation (or handle multiple matches as needed)
-    return finalConversation[0];
+    return null; // No valid conversation found
   } catch (error) {
     console.error("Error checking conversation existence:", error);
     throw error; // Rethrow the error to handle it higher up if needed
   }
 };
+
+// const doesAConversationExist = async (userId1, userId2) => {
+//   try {
+//     // Query ConversationUser for conversations involving userId1
+//     const user1ConversationUsers = await prisma.conversationUser.findMany({
+//       where: { userId: userId1 },
+//       select: { conversationId: true },
+//     });
+
+//     // Extract conversation IDs for userId1
+//     const user1ConversationIds = user1ConversationUsers.map(
+//       (entry) => entry.conversationId
+//     );
+
+//     // Find all conversations where both users participate
+//     const sharedConversationUser = await prisma.conversationUser.findMany({
+//       where: {
+//         userId: userId2,
+//         conversationId: { in: user1ConversationIds },
+//       },
+//     });
+
+//     // Extract the conversation IDs from sharedConversationUser
+//     const sharedConversationIds = sharedConversationUser.map(
+//       (entry) => entry.conversationId
+//     );
+
+//     // Fetch all conversations with participants
+//     const conversations = await prisma.conversation.findMany({
+//       include: {
+//         participants: true, // Include participants to count them
+//       },
+//     });
+
+//     // Filter conversations with exactly 2 participants
+//     const filteredConversations = conversations.filter(
+//       (conversation) => conversation.participants.length === 2
+//     );
+
+//     // Check if any of sharedConversationIds is in the filteredConversations
+//     const finalConversation = filteredConversations.filter((conversation) =>
+//       sharedConversationIds.includes(conversation.id)
+//     );
+
+//     // If no shared conversation exists, return null
+//     if (finalConversation.length === 0) {
+//       return null;
+//     }
+
+//     // Return the first matching conversation (or handle multiple matches as needed)
+//     return finalConversation[0];
+//   } catch (error) {
+//     console.error("Error checking conversation existence:", error);
+//     throw error; // Rethrow the error to handle it higher up if needed
+//   }
+// };
 
 const postNewConversation = async (req, res, next) => {
   if (req.body.participant_usernames) {
