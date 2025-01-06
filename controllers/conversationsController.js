@@ -31,15 +31,14 @@ const createConversationUser = async (givenConversationId, givenUserId) => {
 
 const doesAConversationExist = async (userId1, userId2) => {
   try {
-    // Fetch conversations where both user1 and user2 are participants, ensuring exactly 2 participants
+    // Fetch conversations where both user1 and user2 are participants, and ensure exactly 2 participants
     const conversation = await prisma.conversation.findFirst({
       where: {
         participants: {
-          some: {
-            userId: userId1, // Check if userId1 is part of the conversation
-          },
-          some: {
-            userId: userId2, // Check if userId2 is part of the conversation
+          every: {
+            userId: {
+              in: [userId1, userId2], // Both users must be participants
+            },
           },
         },
       },
