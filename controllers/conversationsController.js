@@ -42,11 +42,25 @@ const doesAConversationExist = async (userId1, userId2) => {
       (entry) => entry.conversationId
     );
 
+    // Filter out group chats: find conversations with exactly 2 participants
+    const twoParticipantConversations = await prisma.conversation.findMany({
+      where: {
+        id: { in: user1ConversationIds },
+        participants: { equals: 2 }, // Assuming `participants` is an aggregate field
+      },
+      select: { id: true },
+    });
+
+    // Extract conversation IDs for two-participant conversations
+    const twoParticipantConversationIds = twoParticipantConversations.map(
+      (conversation) => conversation.id
+    );
+
     // Query ConversationUser for a shared conversation with userId2
     const sharedConversationUser = await prisma.conversationUser.findFirst({
       where: {
         userId: userId2,
-        conversationId: { in: user1ConversationIds },
+        conversationId: { in: twoParticipantConversationIds },
       },
     });
 
@@ -62,7 +76,7 @@ const doesAConversationExist = async (userId1, userId2) => {
       },
     });
 
-    // If a shared conversation exists, return true; otherwise, false
+    // If a shared conversation exists, return it; otherwise, return null
     return sharedConversation;
   } catch (error) {
     console.error("Error checking conversation existence:", error);
