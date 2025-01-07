@@ -274,7 +274,11 @@ const postConversationsOfAUser = async (req, res, next) => {
             user: true, // Include user details
           },
         },
-        message: true, // Include messages in the conversation
+        message: {
+          include: {
+            sender: true,
+          },
+        },
       },
     });
     const allOtherUsers = await prisma.user.findMany({
