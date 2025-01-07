@@ -276,11 +276,7 @@ const postConversationsOfAUser = async (req, res, next) => {
         },
         message: {
           include: {
-            sender: {
-              username: true,
-              id: true,
-              profilePicture: true,
-            },
+            sender: true,
           },
         },
       },
