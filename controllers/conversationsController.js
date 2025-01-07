@@ -29,36 +29,6 @@ const createConversationUser = async (givenConversationId, givenUserId) => {
   }
 };
 
-// const doesAConversationExist = async (userId1, userId2) => {
-//   try {
-//     // Fetch conversations where both user1 and user2 are participants, and ensure exactly 2 participants
-//     const conversation = await prisma.conversation.findFirst({
-//       where: {
-//         participants: {
-//           every: {
-//             userId: {
-//               in: [userId1, userId2], // Both users must be participants
-//             },
-//           },
-//         },
-//       },
-//       include: {
-//         participants: true, // Include participants to ensure both users are in the conversation
-//       },
-//     });
-
-//     // Check if the conversation has exactly 2 participants
-//     if (conversation && conversation.participants.length === 2) {
-//       return conversation; // Return the conversation if both users are present and it's a 2-participant conversation
-//     }
-
-//     return null; // No valid conversation found
-//   } catch (error) {
-//     console.error("Error checking conversation existence:", error);
-//     throw error; // Rethrow the error to handle it higher up if needed
-//   }
-// };
-
 const doesAConversationExist = async (userId1, userId2) => {
   try {
     // Query ConversationUser for conversations involving userId1
@@ -284,76 +254,6 @@ const getConversationById = async (req, res, next) => {
 const postConversationsOfAUser = async (req, res, next) => {
   try {
     const myUserId = parseInt(req.body.myUserId);
-
-    // Fetch all conversations involving myUserId
-    const conversationUsers = await prisma.conversationUser.findMany({
-      where: {
-        userId: myUserId,
-      },
-      include: {
-        conversation: {
-          include: {
-            participants: {
-              include: {
-                user: true, // Include user details (e.g., username)
-              },
-            },
-          },
-        },
-      },
-    });
-
-    // Extract Conversation IDs from filtered conversations
-    const filteredConversationIds = conversationUsers.map(
-      (conv) => conv.conversationId
-    );
-
-    // Fetch all conversation objects whose IDs are in filteredConversations
-    const conversationObjects = await prisma.conversation.findMany({
-      where: {
-        id: {
-          in: filteredConversationIds,
-        },
-      },
-      include: {
-        participants: {
-          include: {
-            user: true, // Include user details
-          },
-        },
-        message: true, // Include messages in the conversation
-      },
-    });
-
-    // Fetch all users excluding myUserId
-    const allOtherUsers = await prisma.user.findMany({
-      where: {
-        id: {
-          not: myUserId,
-        },
-      },
-      select: {
-        id: true,
-        username: true,
-        email: true,
-        profilePicture: true,
-        bio: true,
-      },
-    });
-
-    // Respond with the required data
-    res.json({
-      conversationObjects: conversationObjects, // Full conversation objects
-      allOtherUsers: allOtherUsers, // All other users excluding myUserId
-    });
-  } catch (err) {
-    return next(err);
-  }
-};
-
-const postConversationsOfAUser2 = async (req, res, next) => {
-  try {
-    const myUserId = parseInt(req.body.myUserId);
     const conversationUsers = await prisma.conversationUser.findMany({
       where: {
         userId: myUserId,
@@ -407,5 +307,4 @@ module.exports = {
   postGroupChatsOfAUser,
   getConversationById,
   postConversationsOfAUser,
-  postConversationsOfAUser2,
 };
