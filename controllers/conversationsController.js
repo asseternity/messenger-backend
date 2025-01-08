@@ -182,7 +182,11 @@ const postNewMessage = async (req, res, next) => {
       where: { id: conversationId },
       include: {
         participants: true,
-        message: true,
+        message: {
+          include: {
+            sender: true,
+          },
+        },
       },
     });
     let userId = parseInt(req.body.userId);
