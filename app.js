@@ -82,9 +82,11 @@ app.post("/log-in", (req, res, next) => {
 // mount
 const indexRoute = require("./routes/indexRoute");
 const uploadRoute = require("./routes/uploadRoute");
+const adminRoute = require("./routes/adminRoute");
 
 app.use("/", indexRoute);
 app.use("/upload", uploadRoute);
+app.use("/admin", adminRoute);
 
 // launch
 const port = process.env.PORT || 3000;

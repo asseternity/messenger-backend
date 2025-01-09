@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Soleira's Lounge Internal</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+      }
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+      }
+      th {
+        background-color: #f4f4f4;
+      }
+      .btn-delete {
+        color: white;
+        background-color: red;
+        border: none;
+        padding: 5px 10px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Admin Panel</h1>
+
+    <h2>Users</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Profile Picture</th>
+          <th>Username</th>
+          <th>Bio</th>
+          <th>Email</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% users.forEach(user => { %>
+        <tr>
+          <td>
+            <% if (user.profilePicture) { %>
+            <img
+              src="<%= user.profilePicture %>"
+              alt="Profile Picture"
+              width="50"
+              height="50"
+            />
+            <% } else { %> No Picture <% } %>
+          </td>
+          <td><%= user.username %></td>
+          <td><%= user.bio || 'No bio' %></td>
+          <td><%= user.email %></td>
+          <td>
+            <form
+              action="/admin/delete-user"
+              method="POST"
+              style="display: inline"
+            >
+              <input type="hidden" name="userId" value="<%= user.id %>" />
+              <!-- Password input -->
+              <label for="adminPassword" style="margin-right: 10px"
+                >Admin Password:</label
+              >
+              <input
+                type="password"
+                name="adminPassword"
+                id="adminPassword"
+                required
+                placeholder="Enter admin password"
+                style="margin-right: 10px"
+              />
+              <button class="btn-delete" type="submit">Delete</button>
+            </form>
+          </td>
+        </tr>
+        <% }); %>
+      </tbody>
+    </table>
+
+    <h2>Messages</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Sender</th>
+          <th>Recipient</th>
+          <th>Content</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% messages.forEach(message => { %>
+        <tr>
+          <td><%= message.sender.username %></td>
+          <td><%= message.recipient ? message.recipient.username : 'N/A' %></td>
+          <td><%= message.content %></td>
+          <td><%= new Date(message.createdAt).toLocaleString() %></td>
+        </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </body>
+</html>
