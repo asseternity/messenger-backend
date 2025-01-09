@@ -52,24 +52,27 @@ const postDeleteUser = async (req, res, next) => {
   try {
     const { userId, adminPassword } = req.body;
 
-    // Check if required fields are provided
     if (!userId || !adminPassword) {
       return res.status(400).send("User ID and admin password are required.");
     }
 
-    // Verify the admin password
     if (adminPassword !== process.env.ADMIN_PASSWORD) {
       return res.status(403).send("Unauthorized: Incorrect admin password.");
     }
 
-    // Delete user and all related data
+    const userIdInt = parseInt(userId);
+
+    // Manually delete related records
+    await prisma.message.deleteMany({ where: { senderId: userIdInt } });
+    await prisma.comment.deleteMany({ where: { authorId: userIdInt } });
+    await prisma.post.deleteMany({ where: { authorId: userIdInt } });
+    await prisma.conversationUser.deleteMany({ where: { userId: userIdInt } });
+
+    // Finally, delete the user
     await prisma.user.delete({
-      where: {
-        id: parseInt(userId),
-      },
+      where: { id: userIdInt },
     });
 
-    // Redirect back to the admin panel
     res.redirect("/admin/panel");
   } catch (error) {
     console.error("Error deleting user:", error);
