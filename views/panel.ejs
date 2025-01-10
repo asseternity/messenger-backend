@@ -29,11 +29,26 @@
         padding: 5px 10px;
         cursor: pointer;
       }
+      .pagination {
+        margin: 10px 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .pagination a {
+        text-decoration: none;
+        color: blue;
+        margin: 0 5px;
+      }
+      .pagination span {
+        font-weight: bold;
+      }
     </style>
   </head>
   <body>
     <h1>Admin Panel</h1>
 
+    <!-- Users Section -->
     <h2>Users</h2>
     <table>
       <thead>
@@ -76,6 +91,7 @@
       </tbody>
     </table>
 
+    <!-- Messages Section -->
     <h2>Messages</h2>
     <table>
       <thead>
@@ -97,7 +113,17 @@
         <% }); %>
       </tbody>
     </table>
+    <div class="pagination">
+      <% if (pagination.messagePage > 1) { %>
+      <a href="?messagePage=<%= pagination.messagePage - 1 %>">Previous</a>
+      <% } %>
+      <span>Page <%= pagination.messagePage %></span>
+      <% if (messages.length === pagination.itemsPerPage) { %>
+      <a href="?messagePage=<%= pagination.messagePage + 1 %>">Next</a>
+      <% } %>
+    </div>
 
+    <!-- Posts Section -->
     <h2>Latest Posts</h2>
     <table>
       <thead>
@@ -119,7 +145,17 @@
         <% }); %>
       </tbody>
     </table>
+    <div class="pagination">
+      <% if (pagination.postPage > 1) { %>
+      <a href="?postPage=<%= pagination.postPage - 1 %>">Previous</a>
+      <% } %>
+      <span>Page <%= pagination.postPage %></span>
+      <% if (posts.length === pagination.itemsPerPage) { %>
+      <a href="?postPage=<%= pagination.postPage + 1 %>">Next</a>
+      <% } %>
+    </div>
 
+    <!-- Comments Section -->
     <h2>Latest Comments</h2>
     <table>
       <thead>
@@ -143,5 +179,14 @@
         <% }); %>
       </tbody>
     </table>
+    <div class="pagination">
+      <% if (pagination.commentPage > 1) { %>
+      <a href="?commentPage=<%= pagination.commentPage - 1 %>">Previous</a>
+      <% } %>
+      <span>Page <%= pagination.commentPage %></span>
+      <% if (comments.length === pagination.itemsPerPage) { %>
+      <a href="?commentPage=<%= pagination.commentPage + 1 %>">Next</a>
+      <% } %>
+    </div>
   </body>
 </html>

@@ -3,15 +3,23 @@ const prisma = new PrismaClient();
 
 const getAdminPanel = async (req, res, next) => {
   try {
-    // Fetch all users sorted by creation date (latest first)
+    // Pagination settings
+    const itemsPerPage = 8;
+    const messagePage = parseInt(req.query.messagePage || 1);
+    const postPage = parseInt(req.query.postPage || 1);
+    const commentPage = parseInt(req.query.commentPage || 1);
+
+    // Fetch all users (not paginated)
     const users = await prisma.user.findMany({
       orderBy: {
         createdAt: "desc",
       },
     });
 
-    // Fetch all messages sorted by date (latest first)
+    // Paginated messages
     const messages = await prisma.message.findMany({
+      skip: (messagePage - 1) * itemsPerPage,
+      take: itemsPerPage,
       orderBy: {
         createdAt: "desc",
       },
@@ -29,8 +37,10 @@ const getAdminPanel = async (req, res, next) => {
       },
     });
 
-    // Fetch latest posts sorted by date (latest first)
+    // Paginated posts
     const posts = await prisma.post.findMany({
+      skip: (postPage - 1) * itemsPerPage,
+      take: itemsPerPage,
       orderBy: {
         createdAt: "desc",
       },
@@ -39,8 +49,10 @@ const getAdminPanel = async (req, res, next) => {
       },
     });
 
-    // Fetch latest comments sorted by date (latest first)
+    // Paginated comments
     const comments = await prisma.comment.findMany({
+      skip: (commentPage - 1) * itemsPerPage,
+      take: itemsPerPage,
       orderBy: {
         createdAt: "desc",
       },
@@ -67,12 +79,18 @@ const getAdminPanel = async (req, res, next) => {
       postContent: comment.post.content,
     }));
 
-    // Render the panel.ejs view with users, messages, posts, and comments
+    // Render the panel.ejs view with users, paginated messages, posts, and comments
     res.render("panel", {
       users,
       messages: mappedMessages,
       posts,
       comments: mappedComments,
+      pagination: {
+        messagePage,
+        postPage,
+        commentPage,
+        itemsPerPage,
+      },
     });
   } catch (error) {
     console.error("Error fetching admin panel data:", error);
