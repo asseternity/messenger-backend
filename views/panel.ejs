@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Soleira's Lounge Internal</title>
+    <title>Admin Panel</title>
     <style>
       body {
         font-family: Arial, sans-serif;
@@ -68,18 +68,6 @@
               style="display: inline"
             >
               <input type="hidden" name="userId" value="<%= user.id %>" />
-              <!-- Password input -->
-              <label for="adminPassword" style="margin-right: 10px"
-                >Admin Password:</label
-              >
-              <input
-                type="password"
-                name="adminPassword"
-                id="adminPassword"
-                required
-                placeholder="Enter admin password"
-                style="margin-right: 10px"
-              />
               <button class="btn-delete" type="submit">Delete</button>
             </form>
           </td>
@@ -105,6 +93,52 @@
           <td><%= message.recipient ? message.recipient.username : 'N/A' %></td>
           <td><%= message.content %></td>
           <td><%= new Date(message.createdAt).toLocaleString() %></td>
+        </tr>
+        <% }); %>
+      </tbody>
+    </table>
+
+    <h2>Latest Posts</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Author</th>
+          <th>Content</th>
+          <th>Likes</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% posts.forEach(post => { %>
+        <tr>
+          <td><%= post.author.username %></td>
+          <td><%= post.content %></td>
+          <td><%= post.likes.length %></td>
+          <td><%= new Date(post.createdAt).toLocaleString() %></td>
+        </tr>
+        <% }); %>
+      </tbody>
+    </table>
+
+    <h2>Latest Comments</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Author</th>
+          <th>Post</th>
+          <th>Content</th>
+          <th>Likes</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% comments.forEach(comment => { %>
+        <tr>
+          <td><%= comment.author.username %></td>
+          <td><%= comment.postContent %></td>
+          <td><%= comment.content %></td>
+          <td><%= comment.likes.length %></td>
+          <td><%= new Date(comment.createdAt).toLocaleString() %></td>
         </tr>
         <% }); %>
       </tbody>

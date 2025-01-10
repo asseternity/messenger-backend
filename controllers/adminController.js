@@ -29,6 +29,27 @@ const getAdminPanel = async (req, res, next) => {
       },
     });
 
+    // Fetch latest posts sorted by date (latest first)
+    const posts = await prisma.post.findMany({
+      orderBy: {
+        createdAt: "desc",
+      },
+      include: {
+        author: true,
+      },
+    });
+
+    // Fetch latest comments sorted by date (latest first)
+    const comments = await prisma.comment.findMany({
+      orderBy: {
+        createdAt: "desc",
+      },
+      include: {
+        author: true,
+        post: true,
+      },
+    });
+
     // Map each message to include the recipient's username
     const mappedMessages = messages.map((message) => {
       const recipient = message.conversation.participants.find(
@@ -40,8 +61,19 @@ const getAdminPanel = async (req, res, next) => {
       };
     });
 
-    // Render the panel.ejs view with users and messages
-    res.render("panel", { users, messages: mappedMessages });
+    // Map comments to include the post content
+    const mappedComments = comments.map((comment) => ({
+      ...comment,
+      postContent: comment.post.content,
+    }));
+
+    // Render the panel.ejs view with users, messages, posts, and comments
+    res.render("panel", {
+      users,
+      messages: mappedMessages,
+      posts,
+      comments: mappedComments,
+    });
   } catch (error) {
     console.error("Error fetching admin panel data:", error);
     res.status(500).send("Internal Server Error");
