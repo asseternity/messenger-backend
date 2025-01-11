@@ -100,7 +100,6 @@ const postNewConversation = async (req, res, next) => {
         participantObjects[0].id,
         participantObjects[1].id
       );
-      console.log(sharedConversation);
       if (sharedConversation) {
         const fullConversation = await prisma.conversation.findUnique({
           where: { id: sharedConversation.id },
@@ -110,7 +109,11 @@ const postNewConversation = async (req, res, next) => {
                 user: true, // Include user details (e.g., username)
               },
             },
-            message: true,
+            message: {
+              include: {
+                sender: true,
+              },
+            },
           },
         });
         return res.status(201).json(fullConversation);
