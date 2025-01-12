@@ -1,8 +1,20 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
-const getAdminPanel = async (req, res, next) => {
+const getLoginPage = async (req, res, next) => {
+  res.render("pw");
+};
+
+const postAdminPanel = async (req, res, next) => {
   try {
+    const pw = req.body.adminPassword;
+    const login = req.body.login;
+    if (
+      pw !== process.env.ADMIN_PASSWORD ||
+      login !== process.ENV.ADMIN_LOGIN
+    ) {
+      return res.status(403).send("Unauthorized: Incorrect admin password.");
+    }
     // Pagination settings
     const itemsPerPage = 8;
     const messagePage = parseInt(req.query.messagePage || 1);
@@ -130,4 +142,4 @@ const postDeleteUser = async (req, res, next) => {
   }
 };
 
-module.exports = { getAdminPanel, postDeleteUser };
+module.exports = { getLoginPage, postAdminPanel, postDeleteUser };
