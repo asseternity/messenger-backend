@@ -11,7 +11,7 @@ const postAdminPanel = async (req, res, next) => {
     const login = req.body.login;
     if (
       pw !== process.env.ADMIN_PASSWORD ||
-      login !== process.ENV.ADMIN_LOGIN
+      login !== process.env.ADMIN_LOGIN
     ) {
       return res.status(403).send("Unauthorized: Incorrect admin password.");
     }
