@@ -16,7 +16,7 @@ const postAdminPanel = async (req, res, next) => {
       return res.status(403).send("Unauthorized: Incorrect admin password.");
     }
     // Pagination settings
-    const itemsPerPage = 8;
+    const itemsPerPage = 10000000;
     const messagePage = parseInt(req.query.messagePage || 1);
     const postPage = parseInt(req.query.postPage || 1);
     const commentPage = parseInt(req.query.commentPage || 1);
