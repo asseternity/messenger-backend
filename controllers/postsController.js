@@ -204,6 +204,47 @@ const postGetUsersPosts = async (req, res, next) => {
   }
 };
 
+const postAllPosts = async (req, res, next) => {
+  try {
+    const { page = 1, pageSize = 50 } = req.body;
+    // Fetch posts using a single query with pagination
+    const allPosts = await prisma.post.findMany({
+      include: {
+        comments: {
+          include: {
+            author: {
+              select: {
+                username: true,
+                profilePicture: true,
+              },
+            },
+          },
+        },
+        author: {
+          select: {
+            username: true,
+            profilePicture: true,
+            bio: true,
+            id: true,
+          },
+        },
+      },
+      orderBy: { createdAt: "desc" }, // Optional: Sort posts by newest first
+      skip: (page - 1) * pageSize, // Skip posts for pagination
+      take: pageSize, // Limit the number of post
+    });
+    const allUsers = await prisma.user.findMany({
+      select: {
+        profilePicture: true,
+        id: true,
+      },
+    });
+    return res.status(200).json({ allPosts: allPosts, users: allUsers });
+  } catch (err) {
+    return next(err);
+  }
+};
+
 module.exports = {
   postWriteAPost,
   updateEditAPost,
@@ -211,4 +252,5 @@ module.exports = {
   postGetPostsOfFollows,
   deletePost,
   postGetUsersPosts,
+  postAllPosts,
 };

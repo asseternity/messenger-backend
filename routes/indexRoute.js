@@ -71,6 +71,7 @@ indexRoute.post(
 );
 indexRoute.post("/delete_post", verifyToken, postsController.deletePost);
 indexRoute.post("/users_posts", verifyToken, postsController.postGetUsersPosts);
+indexRoute.post("/all_posts", verifyToken, postsController.postAllPosts);
 
 // comments routes
 indexRoute.post(
