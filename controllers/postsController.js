@@ -142,6 +142,7 @@ const postGetPostsOfFollows = async (req, res, next) => {
       select: {
         profilePicture: true,
         id: true,
+        username: true,
       },
     });
     return res.status(200).json({ post: postsToServe, users: usersToServe });
@@ -241,6 +242,7 @@ const postAllPosts = async (req, res, next) => {
       select: {
         profilePicture: true,
         id: true,
+        username: true,
       },
     });
     return res.status(200).json({ allPosts: allPosts, users: allUsers });
