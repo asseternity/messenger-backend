@@ -198,6 +198,7 @@ const postGetUsersPosts = async (req, res, next) => {
       select: {
         profilePicture: true,
         id: true,
+        username: true,
       },
     });
     return res.status(200).json({ post: usersPosts, users: allUsers });
