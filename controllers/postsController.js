@@ -123,6 +123,7 @@ const postGetPostsOfFollows = async (req, res, next) => {
               },
             },
           },
+          orderBy: { createdAt: "asc" },
         },
         author: {
           select: {
@@ -182,6 +183,7 @@ const postGetUsersPosts = async (req, res, next) => {
               },
             },
           },
+          orderBy: { createdAt: "asc" },
         },
         author: {
           select: {
@@ -219,6 +221,7 @@ const postAllPosts = async (req, res, next) => {
               },
             },
           },
+          orderBy: { createdAt: "asc" },
         },
         author: {
           select: {

@@ -36,12 +36,10 @@ const doesAConversationExist = async (userId1, userId2) => {
       where: { userId: userId1 },
       select: { conversationId: true },
     });
-
     // Extract conversation IDs for userId1
     const user1ConversationIds = user1ConversationUsers.map(
       (entry) => entry.conversationId
     );
-
     // Find all conversations where both users participate
     const sharedConversationUser = await prisma.conversationUser.findMany({
       where: {
@@ -49,37 +47,31 @@ const doesAConversationExist = async (userId1, userId2) => {
         conversationId: { in: user1ConversationIds },
       },
     });
-
     // Extract the conversation IDs from sharedConversationUser
     const sharedConversationIds = sharedConversationUser.map(
       (entry) => entry.conversationId
     );
-
     // Fetch all conversations with participants
     const conversations = await prisma.conversation.findMany({
       include: {
         participants: true, // Include participants to count them
-        message: true,
+        message: { orderBy: { createdAt: "asc" } },
       },
     });
-
     // Filter conversations with exactly 2 participants and at least 1 message
     const filteredConversations = conversations.filter(
       (conversation) =>
         conversation.participants.length === 2 &&
         conversation.message.length > 0
     );
-
     // Check if any of sharedConversationIds is in the filteredConversations
     const finalConversation = filteredConversations.filter((conversation) =>
       sharedConversationIds.includes(conversation.id)
     );
-
     // If no shared conversation exists, return null
     if (finalConversation.length === 0) {
       return null;
     }
-
     // Return the first matching conversation (or handle multiple matches as needed)
     return finalConversation[0];
   } catch (error) {
@@ -112,6 +104,9 @@ const postNewConversation = async (req, res, next) => {
             message: {
               include: {
                 sender: true,
+              },
+              orderBy: {
+                createdAt: "asc", // Order messages by createdAt in ascending order
               },
             },
           },
@@ -149,7 +144,7 @@ const postNewConversation = async (req, res, next) => {
               user: true, // Include user details (e.g., username)
             },
           },
-          message: true,
+          message: { orderBy: { createdAt: "asc" } },
         },
       });
       return res.status(201).json(fullConversation);
@@ -169,7 +164,7 @@ const getConversationMessages = async (req, res, next) => {
       where: { id: conversationReq },
       include: {
         participants: true,
-        message: true,
+        message: { orderBy: { createdAt: "asc" } },
       },
     });
     return res.status(201).json(conversationObject);
@@ -185,7 +180,7 @@ const postNewMessage = async (req, res, next) => {
       where: { id: conversationId },
       include: {
         participants: true,
-        message: true,
+        message: { orderBy: { createdAt: "asc" } },
       },
     });
     let userId = parseInt(req.body.userId);
@@ -203,6 +198,9 @@ const postNewMessage = async (req, res, next) => {
         message: {
           include: {
             sender: true,
+          },
+          orderBy: {
+            createdAt: "asc", // Order messages by createdAt in ascending order
           },
         },
       },
@@ -227,7 +225,7 @@ const postGroupChatsOfAUser = async (req, res, next) => {
       },
       include: {
         participants: true,
-        message: true,
+        message: { orderBy: { createdAt: "asc" } },
       },
     });
 
@@ -247,7 +245,7 @@ const getConversationById = async (req, res, next) => {
         id: conversationId,
       },
       include: {
-        message: true,
+        message: { orderBy: { createdAt: "asc" } },
         participants: true,
       },
     });
@@ -284,6 +282,9 @@ const postConversationsOfAUser = async (req, res, next) => {
         message: {
           include: {
             sender: true,
+          },
+          orderBy: {
+            createdAt: "asc", // Order messages by createdAt in ascending order
           },
         },
       },
