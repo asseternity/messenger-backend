@@ -159,7 +159,10 @@ const deletePost = async (req, res, next) => {
   try {
     const myUserId = parseInt(req.body.myUserId);
     const postId = parseInt(req.body.postId);
-    const postObject = await prisma.post.findUnique({ where: { id: postId } });
+    const postObject = await prisma.post.findUnique({
+      where: { id: postId },
+      include: { authorId: true },
+    });
     if (postObject.authorId === myUserId) {
       await prisma.post.delete({ where: { id: postObject.id } });
       return res.status(200).json({ message: "Post deleted successfully." });
