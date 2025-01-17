@@ -161,7 +161,6 @@ const deletePost = async (req, res, next) => {
     const postId = parseInt(req.body.postId);
     const postObject = await prisma.post.findUnique({
       where: { id: postId },
-      include: { authorId: true },
     });
     if (postObject.authorId === myUserId) {
       await prisma.post.delete({ where: { id: postObject.id } });
