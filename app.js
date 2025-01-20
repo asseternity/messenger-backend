@@ -94,7 +94,7 @@ app.post("/auto-login", (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Generate a new token (you can set a different expiration time if needed)
+    // Generate a new token
     const newToken = jwt.sign(
       { username: user.username, id: user.id },
       process.env.JWT_SECRET,
@@ -104,15 +104,12 @@ app.post("/auto-login", (req, res) => {
     return res.status(200).json({
       message: "Auto-login successful",
       token: newToken, // Send the new token back to the frontend
-      user: {
-        message: "Authentication successful",
-        username: user.username,
-        userId: user.id,
-        id: user.id,
-        profilePicture: user.profilePicture,
-        bio: user.bio,
-        following: user.following,
-      },
+      username: user.username,
+      userId: user.id,
+      id: user.id,
+      profilePicture: user.profilePicture,
+      bio: user.bio,
+      following: user.following,
     });
   });
 });
