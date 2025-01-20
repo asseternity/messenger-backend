@@ -35,12 +35,10 @@ authUser = async (username, password, done) => {
     if (!user) {
       return done(null, false, { message: "Incorrect username" });
     }
-
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return done(null, false, { message: "Incorrect password" });
     }
-
     // User authenticated successfully, now generate a JWT
     const payload = { username: user.username, id: user.id };
     const secret = process.env.JWT_SECRET;
@@ -63,9 +61,7 @@ app.post("/log-in", (req, res, next) => {
     if (!user) {
       return res.status(401).json({ message: info.message });
     }
-
     const token = info.token;
-
     return res.status(200).json({
       message: "Authentication successful",
       token,
@@ -77,6 +73,37 @@ app.post("/log-in", (req, res, next) => {
       following: user.following,
     });
   })(req, res, next);
+});
+
+app.post("/auto-login", (req, res) => {
+  const token = req.headers.authorization?.split(" ")[1]; // Extract token from Authorization header
+  if (!token) {
+    return res.status(401).json({ message: "No token provided" });
+  }
+
+  jwt.verify(token, process.env.JWT_SECRET, async (err, decoded) => {
+    if (err) {
+      return res.status(401).json({ message: "Token is not valid" });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: decoded.id },
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    return res.status(200).json({
+      user: {
+        username: user.username,
+        id: user.id,
+        profilePicture: user.profilePicture,
+        bio: user.bio,
+        following: user.following,
+      },
+    });
+  });
 });
 
 // mount
