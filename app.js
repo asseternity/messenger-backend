@@ -75,44 +75,98 @@ app.post("/log-in", (req, res, next) => {
   })(req, res, next);
 });
 
-app.post("/auto-login", (req, res) => {
-  const token = req.headers["authorization"]?.split(" ")[1]; // Extract token from the 'Authorization' header
-  if (!token) {
-    return res.status(401).json({ message: "No token provided" });
-  }
+// Auto-login
+const JwtStrategy = require("passport-jwt").Strategy;
+const ExtractJwt = require("passport-jwt").ExtractJwt;
 
-  jwt.verify(token, process.env.JWT_SECRET, async (err, decoded) => {
-    if (err) {
-      return res.status(401).json({ message: "Token is not valid" });
+passport.use(
+  new JwtStrategy(
+    {
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      secretOrKey: process.env.JWT_SECRET,
+    },
+    async (jwtPayload, done) => {
+      try {
+        const user = await prisma.user.findUnique({
+          where: { id: jwtPayload.id },
+        });
+        if (!user) {
+          return done(null, false, { message: "User not found" });
+        }
+        return done(null, user); // User is authenticated
+      } catch (err) {
+        return done(err, false);
+      }
     }
+  )
+);
 
-    const user = await prisma.user.findUnique({
-      where: { id: decoded.id },
-    });
-
+app.post(
+  "/auto-login",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    const user = req.user; // User is now authenticated and attached to the request object
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Generate a new token
+    // Generate a new token for the user
     const newToken = jwt.sign(
       { username: user.username, id: user.id },
       process.env.JWT_SECRET,
-      { expiresIn: "1d" } // Set expiration to 1 day
+      { expiresIn: "1d" }
     );
 
-    return res.status(200).json({
+    res.status(200).json({
       message: "Auto-login successful",
-      token: newToken, // Send the new token back to the frontend
+      token: newToken,
       username: user.username,
       userId: user.id,
-      id: user.id,
       profilePicture: user.profilePicture,
       bio: user.bio,
       following: user.following,
     });
-  });
-});
+  }
+);
+
+// app.post("/auto-login", (req, res, next) => {
+//   const token = req.headers["authorization"]?.split(" ")[1]; // Extract token from the 'Authorization' header
+//   if (!token) {
+//     return res.status(401).json({ message: "No token provided" });
+//   }
+
+//   jwt.verify(token, process.env.JWT_SECRET, async (err, decoded) => {
+//     if (err) {
+//       return res.status(401).json({ message: "Token is not valid" });
+//     }
+
+//     const user = await prisma.user.findUnique({
+//       where: { id: decoded.id },
+//     });
+
+//     if (!user) {
+//       return res.status(404).json({ message: "User not found" });
+//     }
+
+//     // Generate a new token
+//     const newToken = jwt.sign(
+//       { username: user.username, id: user.id },
+//       process.env.JWT_SECRET,
+//       { expiresIn: "1d" } // Set expiration to 1 day
+//     );
+
+//     return res.status(200).json({
+//       message: "Auto-login successful",
+//       token: newToken, // Send the new token back to the frontend
+//       username: user.username,
+//       userId: user.id,
+//       id: user.id,
+//       profilePicture: user.profilePicture,
+//       bio: user.bio,
+//       following: user.following,
+//     });
+//   });
+// });
 
 // mount
 const indexRoute = require("./routes/indexRoute");
