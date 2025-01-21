@@ -89,6 +89,11 @@ indexRoute.post(
   verifyToken,
   commentsController.deleteComment
 );
+indexRoute.post(
+  "/edit_comment",
+  verifyToken,
+  commentsController.postEditComment
+);
 
 // profile routes
 indexRoute.get(

@@ -83,4 +83,26 @@ const deleteComment = async (req, res, next) => {
   }
 };
 
-module.exports = { postWriteAComment, postLikeAComment, deleteComment };
+const postEditComment = async (req, res, next) => {
+  try {
+    // get the post id
+    const commentId = parseInt(req.body.commentId);
+    // create a new post and return it
+    const newComment = await prisma.comment.update({
+      where: { id: commentId },
+      data: {
+        content: req.body.commentContent,
+      },
+    });
+    return res.status(201).json(newComment);
+  } catch (err) {
+    return next(err);
+  }
+};
+
+module.exports = {
+  postWriteAComment,
+  postLikeAComment,
+  deleteComment,
+  postEditComment,
+};
