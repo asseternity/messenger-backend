@@ -121,6 +121,9 @@ const postNewNotifications = async (req, res, next) => {
       where: { id: myUserId },
       select: { createdAt: true },
     });
+    if (!myUserObject || !myUserObject.createdAt) {
+      return res.status(404).json({ error: "User not found or invalid data." });
+    }
     // get unread messages
     const conversationUsers = await prisma.conversationUser.findMany({
       where: {
@@ -153,9 +156,10 @@ const postNewNotifications = async (req, res, next) => {
       },
     });
     const unreadConversations = conversations.filter((item) => {
+      const lastMessage = item.message[item.message.length - 1];
       return (
-        item.message[item.message.length - 1].createdAt.getTime() >
-        myUserObject.createdAt.getTime()
+        lastMessage &&
+        lastMessage.createdAt.getTime() > myUserObject.createdAt.getTime()
       );
     });
     // get unread comments
