@@ -113,7 +113,7 @@ indexRoute.post(
   profileController.postSearchByUsername
 );
 indexRoute.post(
-  "notifications",
+  "/notifications",
   verifyToken,
   profileController.postNewNotifications
 );
