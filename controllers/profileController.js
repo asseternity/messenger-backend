@@ -114,9 +114,74 @@ const postSearchByUsername = async (req, res, next) => {
   }
 };
 
+const postNewNotifications = async (req, res, next) => {
+  try {
+    const myUserId = parseInt(req.body.myUserId);
+    const myUserObject = await prisma.user.findUnique({
+      where: { id: myUserId },
+      select: { createdAt: true },
+    });
+    // get unread messages
+    const conversationUsers = await prisma.conversationUser.findMany({
+      where: {
+        userId: myUserId,
+      },
+    });
+    const conversationIds = conversationUsers.map(
+      (conv) => conv.conversationId
+    );
+    const conversations = await prisma.conversation.findMany({
+      where: {
+        id: {
+          in: conversationIds,
+        },
+      },
+      include: {
+        participants: {
+          include: {
+            user: true, // Include user details
+          },
+        },
+        message: {
+          include: {
+            sender: true,
+          },
+          orderBy: {
+            createdAt: "asc", // Order messages by createdAt in ascending order
+          },
+        },
+      },
+    });
+    const unreadConversations = conversations.filter((item) => {
+      return (
+        item.message[item.message.length - 1].createdAt.getTime() >
+        myUserObject.createdAt.getTime()
+      );
+    });
+    // get unread comments
+    const comments = await prisma.comment.findMany({
+      where: {
+        author: {
+          id: myUserId,
+        },
+      },
+    });
+    const unreadComments = comments.filter((item) => {
+      return item.createdAt.getTime() > myUserObject.createdAt.getTime();
+    });
+    return res.status(200).json({
+      unreadMessages: unreadConversations,
+      unreadComments: unreadComments,
+    });
+  } catch (err) {
+    return next(err);
+  }
+};
+
 module.exports = {
   getUserDataById,
   updateUserProfile,
   postFollowUnfollow,
   postSearchByUsername,
+  postNewNotifications,
 };

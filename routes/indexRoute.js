@@ -112,5 +112,10 @@ indexRoute.post(
   verifyToken,
   profileController.postSearchByUsername
 );
+indexRoute.post(
+  "notifications",
+  verifyToken,
+  profileController.postNewNotifications
+);
 
 module.exports = indexRoute;
