@@ -196,8 +196,7 @@ const postNewNotifications = async (req, res, next) => {
         },
       },
       include: {
-        sender: true, // Include sender details
-        conversation: true, // Include conversation details
+        select: { username: true },
       },
     });
     return res.status(200).json({
