@@ -117,5 +117,10 @@ indexRoute.post(
   verifyToken,
   profileController.postNewNotifications
 );
+indexRoute.post(
+  "notification_update",
+  verifyToken,
+  profileController.postUpdateNotificationTime
+);
 
 module.exports = indexRoute;

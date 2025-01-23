@@ -182,10 +182,28 @@ const postNewNotifications = async (req, res, next) => {
   }
 };
 
+const postUpdateNotificationTime = async (req, res, next) => {
+  try {
+    const myUserId = parseInt(req.body.myUserId);
+    const newCheckTime = new Date();
+    const updatedUser = await prisma.user.update({
+      where: { id: myUserId },
+      data: { createdAt: newCheckTime },
+    });
+    res.status(200).json({
+      message: "createdAt time updated successfully",
+      updatedUser,
+    });
+  } catch (err) {
+    return next(err);
+  }
+};
+
 module.exports = {
   getUserDataById,
   updateUserProfile,
   postFollowUnfollow,
   postSearchByUsername,
   postNewNotifications,
+  postUpdateNotificationTime,
 };
