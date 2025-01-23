@@ -132,7 +132,7 @@ const postNewNotifications = async (req, res, next) => {
         },
       },
       include: {
-        sender: {
+        author: {
           select: {
             username: true,
           },
@@ -160,7 +160,9 @@ const postNewNotifications = async (req, res, next) => {
         },
       },
       include: {
-        select: { username: true },
+        sender: {
+          select: { username: true },
+        },
       },
     });
     return res.status(200).json({
