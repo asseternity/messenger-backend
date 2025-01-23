@@ -118,7 +118,7 @@ indexRoute.post(
   profileController.postNewNotifications
 );
 indexRoute.post(
-  "notification_update",
+  "/notification_update",
   verifyToken,
   profileController.postUpdateNotificationTime
 );
