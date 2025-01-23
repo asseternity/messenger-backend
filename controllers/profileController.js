@@ -171,7 +171,9 @@ const postNewNotifications = async (req, res, next) => {
       },
       include: {
         author: {
-          select: { username: true },
+          select: {
+            username: true,
+          },
         },
       },
     });
