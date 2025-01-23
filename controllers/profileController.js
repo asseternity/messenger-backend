@@ -182,7 +182,7 @@ const postNewNotifications = async (req, res, next) => {
     const unreadMessages = await prisma.message.findMany({
       where: {
         createdAt: {
-          gt: myUserObject.createdAt.getTime(), // Ensure req.body.time is a valid Date object
+          gt: myUserObject.createdAt, // Ensure req.body.time is a valid Date object
         },
         conversation: {
           participants: {
