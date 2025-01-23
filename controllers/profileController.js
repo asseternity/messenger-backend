@@ -125,43 +125,43 @@ const postNewNotifications = async (req, res, next) => {
       return res.status(404).json({ error: "User not found or invalid data." });
     }
     // get unread messages
-    const conversationUsers = await prisma.conversationUser.findMany({
-      where: {
-        userId: myUserId,
-      },
-    });
-    const conversationIds = conversationUsers.map(
-      (conv) => conv.conversationId
-    );
-    const conversations = await prisma.conversation.findMany({
-      where: {
-        id: {
-          in: conversationIds,
-        },
-      },
-      include: {
-        participants: {
-          include: {
-            user: true, // Include user details
-          },
-        },
-        message: {
-          include: {
-            sender: true,
-          },
-          orderBy: {
-            createdAt: "asc", // Order messages by createdAt in ascending order
-          },
-        },
-      },
-    });
-    const unreadConversations = conversations.filter((item) => {
-      const lastMessage = item.message[item.message.length - 1];
-      return (
-        lastMessage &&
-        lastMessage.createdAt.getTime() > myUserObject.createdAt.getTime()
-      );
-    });
+    // const conversationUsers = await prisma.conversationUser.findMany({
+    //   where: {
+    //     userId: myUserId,
+    //   },
+    // });
+    // const conversationIds = conversationUsers.map(
+    //   (conv) => conv.conversationId
+    // );
+    // const conversations = await prisma.conversation.findMany({
+    //   where: {
+    //     id: {
+    //       in: conversationIds,
+    //     },
+    //   },
+    //   include: {
+    //     participants: {
+    //       include: {
+    //         user: true, // Include user details
+    //       },
+    //     },
+    //     message: {
+    //       include: {
+    //         sender: true,
+    //       },
+    //       orderBy: {
+    //         createdAt: "asc", // Order messages by createdAt in ascending order
+    //       },
+    //     },
+    //   },
+    // });
+    // const unreadConversations = conversations.filter((item) => {
+    //   const lastMessage = item.message[item.message.length - 1];
+    //   return (
+    //     lastMessage &&
+    //     lastMessage.createdAt.getTime() > myUserObject.createdAt.getTime()
+    //   );
+    // });
     // get unread comments
     const comments = await prisma.comment.findMany({
       where: {
@@ -169,12 +169,41 @@ const postNewNotifications = async (req, res, next) => {
           id: myUserId,
         },
       },
+      include: {
+        author: {
+          include: {
+            username: true,
+          },
+        },
+      },
     });
     const unreadComments = comments.filter((item) => {
       return item.createdAt.getTime() > myUserObject.createdAt.getTime();
     });
+    // get unread messages
+    const unreadMessages = await prisma.message.findMany({
+      where: {
+        createdAt: {
+          gt: new Date(req.body.time), // Ensure req.body.time is a valid Date object
+        },
+        conversation: {
+          participants: {
+            some: {
+              userId: req.body.myUserId, // Check if the user is a participant
+            },
+          },
+        },
+        senderId: {
+          not: req.body.myUserId, // Exclude messages sent by the user
+        },
+      },
+      include: {
+        sender: true, // Include sender details
+        conversation: true, // Include conversation details
+      },
+    });
     return res.status(200).json({
-      unreadMessages: unreadConversations,
+      unreadMessages: unreadMessages,
       unreadComments: unreadComments,
     });
   } catch (err) {
