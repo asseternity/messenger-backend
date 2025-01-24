@@ -35,6 +35,14 @@ authUser = async (username, password, done) => {
     if (!user) {
       return done(null, false, { message: "Incorrect username" });
     }
+    // Special case for guest user login: Skip password check
+    if (username === "Guest") {
+      const payload = { username: user.username, id: user.id };
+      const secret = process.env.JWT_SECRET;
+      const options = { expiresIn: "2h" };
+      const token = jwt.sign(payload, secret, options);
+      return done(null, user, { token });
+    }
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return done(null, false, { message: "Incorrect password" });
@@ -92,6 +100,11 @@ passport.use(
         });
         if (!user) {
           return done(null, false, { message: "User not found" });
+        }
+        if (user.username === "Guest") {
+          return done(null, false, {
+            message: "Not available for guest login",
+          });
         }
         return done(null, user); // User is authenticated
       } catch (err) {

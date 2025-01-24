@@ -24,6 +24,15 @@ const verifyToken = (req, res, next) => {
   });
 };
 
+const restrictGuest = (req, res, next) => {
+  if (req.user.username === "Guest") {
+    return res
+      .status(403)
+      .json({ message: "Guest users cannot perform this action" });
+  }
+  next();
+};
+
 indexRoute.get("/", indexController.getIndex);
 indexRoute.get("/fail", indexController.getFailure);
 indexRoute.get("/empty", indexController.getEmpty);
@@ -42,6 +51,7 @@ indexRoute.get(
 indexRoute.post(
   "/new-message",
   verifyToken,
+  restrictGuest,
   conversationsController.postNewMessage
 );
 indexRoute.post(
@@ -61,15 +71,30 @@ indexRoute.post(
 );
 
 // posts routes
-indexRoute.post("/new_post", verifyToken, postsController.postWriteAPost);
-indexRoute.post("/update_post", verifyToken, postsController.updateEditAPost);
+indexRoute.post(
+  "/new_post",
+  verifyToken,
+  restrictGuest,
+  postsController.postWriteAPost
+);
+indexRoute.post(
+  "/update_post",
+  restrictGuest,
+  verifyToken,
+  postsController.updateEditAPost
+);
 indexRoute.post("/like_post", verifyToken, postsController.postLikeAPost);
 indexRoute.post(
   "/get_feed",
   verifyToken,
   postsController.postGetPostsOfFollows
 );
-indexRoute.post("/delete_post", verifyToken, postsController.deletePost);
+indexRoute.post(
+  "/delete_post",
+  verifyToken,
+  restrictGuest,
+  postsController.deletePost
+);
 indexRoute.post("/users_posts", verifyToken, postsController.postGetUsersPosts);
 indexRoute.post("/all_posts", verifyToken, postsController.postAllPosts);
 
@@ -77,6 +102,7 @@ indexRoute.post("/all_posts", verifyToken, postsController.postAllPosts);
 indexRoute.post(
   "/new_comment",
   verifyToken,
+  restrictGuest,
   commentsController.postWriteAComment
 );
 indexRoute.post(
@@ -87,11 +113,13 @@ indexRoute.post(
 indexRoute.post(
   "/delete_comment",
   verifyToken,
+  restrictGuest,
   commentsController.deleteComment
 );
 indexRoute.post(
   "/edit_comment",
   verifyToken,
+  restrictGuest,
   commentsController.postEditComment
 );
 
@@ -104,6 +132,7 @@ indexRoute.get(
 indexRoute.post(
   "/update_profile",
   verifyToken,
+  restrictGuest,
   profileController.updateUserProfile
 );
 indexRoute.post("/follow", verifyToken, profileController.postFollowUnfollow);
