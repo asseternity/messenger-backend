@@ -65,6 +65,7 @@ authUser = async (username, password, done) => {
 passport.use(new LocalStrategy(authUser));
 
 app.post("/log-in", (req, res, next) => {
+  console.log("Login route accessed");
   passport.authenticate("local", { session: false }, (err, user, info) => {
     if (err) {
       return res.status(500).json({ message: "Server error", error: err });
