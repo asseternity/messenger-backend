@@ -29,14 +29,17 @@ const prisma = new PrismaClient();
 
 authUser = async (username, password, done) => {
   try {
+    console.log("Authenticating user:", username);
     const user = await prisma.user.findUnique({
       where: { username: username },
     });
+    console.log("User found:", user);
     if (!user) {
       return done(null, false, { message: "Incorrect username" });
     }
     // Special case for guest user login: Skip password check
     if (username === "Guest") {
+      console.log("Guest user logging in...");
       const payload = { username: user.username, id: user.id };
       const secret = process.env.JWT_SECRET;
       const options = { expiresIn: "2h" };
