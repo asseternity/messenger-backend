@@ -119,7 +119,7 @@ const postNewNotifications = async (req, res, next) => {
     const myUserId = parseInt(req.body.myUserId);
     const myUserObject = await prisma.user.findUnique({
       where: { id: myUserId },
-      select: { createdAt: true },
+      select: { createdAt: true, username: true },
     });
     if (!myUserObject || !myUserObject.createdAt) {
       return res.status(404).json({ error: "User not found or invalid data." });
