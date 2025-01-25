@@ -124,6 +124,19 @@ const postNewNotifications = async (req, res, next) => {
     if (!myUserObject || !myUserObject.createdAt) {
       return res.status(404).json({ error: "User not found or invalid data." });
     }
+    // special route for guest account
+    if (myUserObject.username === "Guest") {
+      const guestNotification = {
+        createdAt: "2099-01-25",
+        sender: { username: "Soleira's Lounge" },
+        content:
+          "SAMPLE NOTIFICATION | This is a sample notification! You will receive ones like this in real accounts for new messages and comments to your posts.",
+      };
+      return res.status(200).json({
+        unreadMessages: [guestNotification],
+        unreadComments: [],
+      });
+    }
     // get unread comments
     const comments = await prisma.comment.findMany({
       where: {
