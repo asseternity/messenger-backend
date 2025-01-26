@@ -11,8 +11,6 @@ const getFailure = async (req, res, next) => {
 };
 
 const getEmpty = async (req, res, next) => {
-  console.log(req.user);
-  console.log(req.session);
   res.render("passport_empty");
 };
 
