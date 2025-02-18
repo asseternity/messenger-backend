@@ -39,7 +39,7 @@ authUser = async (username, password, done) => {
     if (username === "Guest") {
       const payload = { username: user.username, id: user.id };
       const secret = process.env.JWT_SECRET;
-      const options = { expiresIn: "2h" };
+      const options = { expiresIn: "7d" };
       const token = jwt.sign(payload, secret, options);
       return done(null, user, { token });
     }
@@ -50,7 +50,7 @@ authUser = async (username, password, done) => {
     // User authenticated successfully, now generate a JWT
     const payload = { username: user.username, id: user.id };
     const secret = process.env.JWT_SECRET;
-    const options = { expiresIn: "2h" };
+    const options = { expiresIn: "7d" };
     const token = jwt.sign(payload, secret, options);
 
     return done(null, user, { token });
@@ -127,7 +127,7 @@ app.post(
     const newToken = jwt.sign(
       { username: user.username, id: user.id },
       process.env.JWT_SECRET,
-      { expiresIn: "1d" }
+      { expiresIn: "7d" }
     );
 
     res.status(200).json({
