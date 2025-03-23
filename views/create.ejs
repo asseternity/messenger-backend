@@ -47,6 +47,7 @@
               <th>Author</th>
               <th>Text</th>
               <th>Comments</th>
+              <th>Like button</th>
             </tr>
           </thead>
           <tbody>
@@ -71,6 +72,17 @@
                   </li>
                   <% } %>
                 </ul>
+              </td>
+              <td>
+                <form action="/admin/get-in" method="GET">
+                  <input type="hidden" name="myUserId" value="<%= userId %>" />
+                  <input
+                    type="hidden"
+                    name="postId"
+                    value="<%= content[j].id %>"
+                  />
+                  <button type="submit">Like/Unlike</button>
+                </form>
               </td>
             </tr>
             <% } %>
