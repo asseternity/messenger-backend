@@ -26,14 +26,14 @@ const verifyToken = (req, res, next) => {
 
 const restrictGuest = (req, res, next) => {
   if (!req.user) {
-    next();
+    return next();
   }
   if (req.user.username === "Guest") {
     return res
       .status(403)
       .json({ message: "Guest users cannot perform this action" });
   }
-  next();
+  return next();
 };
 
 indexRoute.get("/", indexController.getIndex);
