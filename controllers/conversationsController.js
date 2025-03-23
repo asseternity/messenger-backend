@@ -176,6 +176,9 @@ const getConversationMessages = async (req, res, next) => {
 const postNewMessage = async (req, res, next) => {
   try {
     let conversationId = parseInt(req.body.conversationId);
+    if (!conversationId) {
+      return res.status(400).json({ error: "Conversation ID is required." });
+    }
     let conversationObject = await prisma.conversation.findUnique({
       where: { id: conversationId },
       include: {
