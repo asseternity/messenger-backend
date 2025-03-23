@@ -14,6 +14,10 @@ const postWriteAComment = async (req, res, next) => {
         authorId: myUserId,
       },
     });
+    // if no req.user, render the get-in page
+    if (!req.user) {
+      return res.render("pw");
+    }
     return res.status(201).json(newComment);
   } catch (err) {
     return next(err);
