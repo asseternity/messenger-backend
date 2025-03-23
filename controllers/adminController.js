@@ -220,7 +220,7 @@ const postCreate = async (req, res, next) => {
               sender: true,
             },
             orderBy: {
-              createdAt: "asc", // Order messages by createdAt in ascending order
+              createdAt: "desc", // Order messages by createdAt in ascending order
             },
           },
         },
