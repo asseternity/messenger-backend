@@ -226,7 +226,7 @@ const postCreate = async (req, res, next) => {
       res.render("create", {
         userId,
         createType,
-        context: conversations,
+        content: conversations,
       });
       break;
   }
