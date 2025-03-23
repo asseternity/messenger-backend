@@ -204,6 +204,9 @@ const postCreate = async (req, res, next) => {
           id: {
             in: conversationIds,
           },
+          message: {
+            some: {}, // This ensures at least one message exists
+          },
         },
         include: {
           participants: {
