@@ -25,6 +25,9 @@ const verifyToken = (req, res, next) => {
 };
 
 const restrictGuest = (req, res, next) => {
+  if (!req.user) {
+    next();
+  }
   if (req.user.username === "Guest") {
     return res
       .status(403)
