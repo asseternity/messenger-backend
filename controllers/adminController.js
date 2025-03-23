@@ -142,4 +142,94 @@ const postDeleteUser = async (req, res, next) => {
   }
 };
 
-module.exports = { getLoginPage, postAdminPanel, postDeleteUser };
+const postCreate = async (req, res, next) => {
+  const createType = req.body.create_type;
+  const userId = parseInt(req.body.userId);
+  if (!createType && !userId) {
+    return res.status(400).send("Type of data to be created is required.");
+  }
+  switch (createType) {
+    case "post":
+      // render create.ejs
+      res.render("create", {
+        userId,
+        createType,
+      });
+      break;
+    case "comment":
+      // grab five latest posts, with all comments to each
+      const posts = await prisma.post.findMany({
+        take: 5,
+        orderBy: {
+          createdAt: "desc",
+        },
+        include: {
+          comments: {
+            include: {
+              author: {
+                select: {
+                  username: true,
+                },
+              },
+            },
+            orderBy: { createdAt: "asc" },
+          },
+          author: {
+            select: {
+              username: true,
+              id: true,
+            },
+          },
+        },
+      });
+      // attach them and render create.ejs
+      res.render("create", {
+        userId,
+        createType,
+        context: posts,
+      });
+      break;
+    case "message":
+      // grab three latest chats, with five last messages in each
+      const conversationUsers = await prisma.conversationUser.findMany({
+        where: {
+          userId: userId,
+        },
+      });
+      const conversationIds = conversationUsers.map(
+        (conv) => conv.conversationId
+      );
+      const conversations = await prisma.conversation.findMany({
+        where: {
+          id: {
+            in: conversationIds,
+          },
+        },
+        include: {
+          participants: {
+            include: {
+              user: true, // Include user details
+            },
+          },
+          message: {
+            take: 5,
+            include: {
+              sender: true,
+            },
+            orderBy: {
+              createdAt: "asc", // Order messages by createdAt in ascending order
+            },
+          },
+        },
+      });
+      // attach them and render create.ejs
+      res.render("create", {
+        userId,
+        createType,
+        context: conversations,
+      });
+      break;
+  }
+};
+
+module.exports = { getLoginPage, postAdminPanel, postDeleteUser, postCreate };

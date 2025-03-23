@@ -50,7 +50,6 @@ indexRoute.get(
 );
 indexRoute.post(
   "/new-message",
-  verifyToken,
   restrictGuest,
   conversationsController.postNewMessage
 );
@@ -71,12 +70,7 @@ indexRoute.post(
 );
 
 // posts routes
-indexRoute.post(
-  "/new_post",
-  verifyToken,
-  restrictGuest,
-  postsController.postWriteAPost
-);
+indexRoute.post("/new_post", restrictGuest, postsController.postWriteAPost);
 indexRoute.post(
   "/update_post",
   restrictGuest,
@@ -101,15 +95,10 @@ indexRoute.post("/all_posts", verifyToken, postsController.postAllPosts);
 // comments routes
 indexRoute.post(
   "/new_comment",
-  verifyToken,
   restrictGuest,
   commentsController.postWriteAComment
 );
-indexRoute.post(
-  "/like_comment",
-  verifyToken,
-  commentsController.postLikeAComment
-);
+indexRoute.post("/like_comment", commentsController.postLikeAComment);
 indexRoute.post(
   "/delete_comment",
   verifyToken,

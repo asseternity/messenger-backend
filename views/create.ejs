@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Panel - Create content</title>
+  </head>
+  <body>
+    <!-- if post -->
+    <% if (createType === "post") { %>
+    <div>
+      <!-- form to create a new post -->
+      <form action="/new_post" method="POST">
+        <h2>Create a new post</h2>
+        <input type="hidden" name="myUserId" value="<%= userId %>" />
+        <input type="text" name="postContent" />
+        <button type="submit">Submit</button>
+      </form>
+      <!-- it leads to the frontend create post route -->
+      <!-- but also here we redirect the user to the admin control panel (no password) -->
+    </div>
+    <% } %>
+
+    <!-- if comment -->
+    <!-- list 10 latest posts -->
+    <% if (createType === "comment") { %>
+    <div>
+      <!-- show a table: poster, post text, comments -->
+      <!-- ability to pick the post -->
+
+      <!-- form to create a new comment -->
+      <!-- it leads to the frontend create comment route -->
+      <!-- but also likes the post! -->
+      <!-- but also here we redirect the user to the admin control panel (no password) -->
+      <form action="/new_comment" method="POST">
+        <h2>Create a new comment</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Selection</th>
+              <th>Author</th>
+              <th>Text</th>
+              <th>Comments</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% for (let j = 0; j < content.length; j++) { %>
+            <tr>
+              <td>
+                <input
+                  type="radio"
+                  id="<%= content[j].id %>"
+                  name="myPostId"
+                  value="<%= content[j].id %>"
+                />
+              </td>
+              <td><%= content[j].author.username %></td>
+              <td><%= content[j].content %></td>
+              <td>
+                <ul>
+                  <% for (let i = 0; i < content[j].comments.length; i++) { %>
+                  <li>
+                    <%= content[j].comments[i].author.username %> : <%=
+                    content[j].comments[i].content
+                  </li>
+                  <% } %>
+                </ul>
+              </td>
+            </tr>
+            <% } %>
+          </tbody>
+        </table>
+        <input type="hidden" name="myUserId" value="<%= userId %>" />
+        <input type="text" name="commentContent" />
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+    <% } %>
+
+    <!-- if message -->
+    <!-- list three latest chats with five latest messages -->
+    <% if (createType === "message") { %>
+    <div>
+      <!-- show a table: all convo participants, bullet points with latest messages: who, what did they say and when -->
+      <!-- ability to pick the convo -->
+
+      <!-- form to create a new message -->
+      <!-- it leads to the frontend create message route -->
+      <!-- but also here we redirect the user to the admin control panel (no password) -->
+      <form action="/new-message" method="POST">
+        <h2>Create a new message</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Selection</th>
+              <th>Participants</th>
+              <th>Messages</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% for (let j = 0; j < content.length; j++) { %>
+            <tr>
+              <td>
+                <input
+                  type="radio"
+                  id="<%= content[j].id %>"
+                  name="conversationId"
+                  value="<%= content[j].id %>"
+                />
+              </td>
+              <td>
+                <% for (let k = 0; k < content[j].participants.length; k++) { %>
+                <span> <%= content[j].participants[k].user.username %> | </span>
+                <% } %>
+              </td>
+              <td>
+                <ul>
+                  <% for (let m = 0; m < content[j].message.length; m++) { %>
+                  <li>
+                    <%= content[j].message[m].sender.username %> : <%=
+                    content[j].message[m].content
+                  </li>
+                  <% } %>
+                </ul>
+              </td>
+            </tr>
+            <% } %>
+          </tbody>
+        </table>
+        <input type="hidden" name="myUserId" value="<%= userId %>" />
+        <input type="text" name="content" />
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+    <% } %>
+    <form action="/get-in" method="GET">
+      <button type="submit">Go back</button>
+    </form>
+  </body>
+</html>

@@ -92,6 +92,27 @@
               />
               <button class="btn-delete" type="submit">Delete</button>
             </form>
+            <!-- new method to post content from my admin board -->
+            <form action="/admin/create" method="POST" style="display: inline">
+              <input type="hidden" name="userId" value="<%= user.id %>" />
+              <input type="radio" id="post" name="create_type" value="post" />
+              <label for="html">Post</label><br />
+              <input
+                type="radio"
+                id="comment"
+                name="create_type"
+                value="comment"
+              />
+              <label for="css">Comment</label><br />
+              <input
+                type="radio"
+                id="message"
+                name="create_type"
+                value="message"
+              />
+              <label for="javascript">Message</label>
+              <button class="btn-delete">Create</button>
+            </form>
           </td>
         </tr>
         <% }); %>

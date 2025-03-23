@@ -7,5 +7,6 @@ const adminController = require("../controllers/adminController");
 adminRoute.get("/get-in", adminController.getLoginPage);
 adminRoute.post("/get-in", adminController.postAdminPanel);
 adminRoute.post("/delete-user", adminController.postDeleteUser);
+adminRoute.post("/create", adminController.postCreate);
 
 module.exports = adminRoute;
