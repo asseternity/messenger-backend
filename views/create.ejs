@@ -4,6 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin Panel - Create</title>
+    <style>
+      .text_field {
+        height: 300px;
+        width: 80vw;
+      }
+    </style>
   </head>
   <body>
     <!-- if post -->
@@ -13,7 +19,7 @@
       <form action="/new_post" method="POST">
         <h2>Create a new post</h2>
         <input type="hidden" name="myUserId" value="<%= userId %>" />
-        <input type="text" name="postContent" />
+        <input type="text" name="postContent" class="text_field" />
         <button type="submit">Submit</button>
       </form>
       <!-- it leads to the frontend create post route -->
@@ -71,7 +77,7 @@
           </tbody>
         </table>
         <input type="hidden" name="myUserId" value="<%= userId %>" />
-        <input type="text" name="commentContent" />
+        <input type="text" name="commentContent" class="text_field" />
         <button type="submit">Submit</button>
       </form>
     </div>
@@ -128,7 +134,7 @@
           </tbody>
         </table>
         <input type="hidden" name="myUserId" value="<%= userId %>" />
-        <input type="text" name="content" />
+        <input type="text" name="content" class="text_field" />
         <button type="submit">Submit</button>
       </form>
     </div>

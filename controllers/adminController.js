@@ -186,7 +186,7 @@ const postCreate = async (req, res, next) => {
       res.render("create", {
         userId,
         createType,
-        context: posts,
+        content: posts,
       });
       break;
     case "message":
