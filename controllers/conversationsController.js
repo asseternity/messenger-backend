@@ -81,7 +81,14 @@ const doesAConversationExist = async (userId1, userId2) => {
 };
 
 const postNewConversation = async (req, res, next) => {
+  let participantUsernames = [];
   if (req.body.participant_usernames) {
+    participantUsernames = req.body.participant_usernames;
+  }
+  if (req.body.user1 && req.body.user2) {
+    participantUsernames = [req.body.user1, req.body.user2];
+  }
+  if (participantUsernames.length > 1) {
     let participantUsernames = req.body.participant_usernames;
     // find user objects in DB
     let participantObjects = await Promise.all(
@@ -147,6 +154,17 @@ const postNewConversation = async (req, res, next) => {
           message: { orderBy: { createdAt: "asc" } },
         },
       });
+      // if no user, post a message immediately
+      if (!req.user) {
+        await prisma.message.create({
+          data: {
+            conversationId: fullConversation.id,
+            senderId: req.user.userId,
+            content: req.body.content,
+          },
+        });
+        return res.render("pw");
+      }
       return res.status(201).json(fullConversation);
     } catch (err) {
       console.log(err);

@@ -149,6 +149,36 @@
         <input type="text" name="content" class="text_field" />
         <button type="submit">Submit</button>
       </form>
+      <form>
+        <h2>Or write to a new person:</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Select</th>
+              <th>Username</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% for (let x = i; x < users.length; x++) { %>
+            <tr>
+              <td>
+                <input
+                  type="radio"
+                  id="<%= users[x].id %>"
+                  name="user1"
+                  value="<%= users[x].id %>"
+                />
+              </td>
+              <td><%= users[x].username %></td>
+            </tr>
+            <% } %>
+          </tbody>
+        </table>
+        <input type="hidden" name="user2" value="<%= username %>" />
+        <input type="hidden" name="userId" value="<%= userId %>" />
+        <input type="text" name="content" class="text_field" />
+        <button type="submit">Submit</button>
+      </form>
     </div>
     <% } %>
     <form action="/admin/get-in" method="GET">

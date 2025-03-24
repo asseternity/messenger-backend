@@ -96,6 +96,11 @@
             <!-- new method to post content from my admin board -->
             <form action="/admin/create" method="POST" style="display: inline">
               <input type="hidden" name="userId" value="<%= user.id %>" />
+              <input
+                type="hidden"
+                name="username"
+                value="<%= user.username %>"
+              />
               <input type="radio" id="post" name="create_type" value="post" />
               <label for="html">Post</label><br />
               <input

@@ -145,6 +145,7 @@ const postDeleteUser = async (req, res, next) => {
 const postCreate = async (req, res, next) => {
   const createType = req.body.create_type;
   const userId = parseInt(req.body.userId);
+  const username = req.body.username;
   if (!createType && !userId) {
     return res.status(400).send("Type of data to be created is required.");
   }
@@ -225,11 +226,31 @@ const postCreate = async (req, res, next) => {
           },
         },
       });
+      // grab all other users
+      const players = [
+        "Kaitain",
+        "Tian The Radiant",
+        "Oriol Ampolla Verde",
+        'Misk "Devil Spawn" Gordano',
+      ];
+      const users = await prisma.user.findMany({
+        where: {
+          username: {
+            in: players,
+          },
+        },
+        select: {
+          id: true,
+          username: true,
+        },
+      });
       // attach them and render create.ejs
       res.render("create", {
         userId,
+        username,
         createType,
         content: conversations,
+        users,
       });
       break;
   }
