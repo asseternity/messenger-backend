@@ -83,7 +83,7 @@
       </form>
       <!-- liking posts -->
       <% for (let u = 0; u < content.length; u++) { %>
-      <form action="/admin/get-in" method="GET">
+      <form action="/like_post" method="POST">
         <input type="hidden" name="myUserId" value="<%= userId %>" />
         <input type="hidden" name="postId" value="<%= content[u].id %>" />
         <button type="submit">
