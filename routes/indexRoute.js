@@ -41,11 +41,7 @@ indexRoute.get("/fail", indexController.getFailure);
 indexRoute.get("/empty", indexController.getEmpty);
 indexRoute.post("/sign-up", indexController.postSignUp);
 indexRoute.get("/all-users", verifyToken, indexController.getAllUsers);
-indexRoute.post(
-  "/new-chat",
-  verifyToken,
-  conversationsController.postNewConversation
-);
+indexRoute.post("/new-chat", conversationsController.postNewConversation);
 indexRoute.get(
   "/:conversationId",
   verifyToken,
