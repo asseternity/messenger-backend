@@ -80,7 +80,7 @@ indexRoute.post(
   verifyToken,
   postsController.updateEditAPost
 );
-indexRoute.post("/like_post", verifyToken, postsController.postLikeAPost);
+indexRoute.post("/like_post", postsController.postLikeAPost);
 indexRoute.post(
   "/get_feed",
   verifyToken,
