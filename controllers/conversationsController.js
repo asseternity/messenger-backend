@@ -89,7 +89,6 @@ const postNewConversation = async (req, res, next) => {
     participantUsernames = [req.body.user1, req.body.user2];
   }
   if (participantUsernames.length > 1) {
-    let participantUsernames = req.body.participant_usernames;
     // find user objects in DB
     let participantObjects = await Promise.all(
       participantUsernames.map((item) => findUserByUsername(item))
