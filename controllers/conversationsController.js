@@ -93,7 +93,7 @@ const postNewConversation = async (req, res, next) => {
     let participantObjects = await Promise.all(
       participantUsernames.map((item) => findUserByUsername(item))
     );
-    if (req.body.participant_usernames.length == 2) {
+    if (participantUsernames.length == 2) {
       const sharedConversation = await doesAConversationExist(
         participantObjects[0].id,
         participantObjects[1].id
@@ -132,7 +132,7 @@ const postNewConversation = async (req, res, next) => {
         )
       );
       // if groupchat, send a starting message in the conversation
-      if (req.body.participant_usernames.length > 2) {
+      if (participantUsernames.length > 2) {
         await prisma.message.create({
           data: {
             conversationId: conversation.id,
