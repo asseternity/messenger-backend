@@ -47,7 +47,7 @@
               <th>Author</th>
               <th>Text</th>
               <th>Comments</th>
-              <th>Like button</th>
+              \
             </tr>
           </thead>
           <tbody>
@@ -73,17 +73,6 @@
                   <% } %>
                 </ul>
               </td>
-              <td>
-                <form action="/admin/get-in" method="GET">
-                  <input type="hidden" name="myUserId" value="<%= userId %>" />
-                  <input
-                    type="hidden"
-                    name="postId"
-                    value="<%= content[j].id %>"
-                  />
-                  <button type="submit">Like/Unlike</button>
-                </form>
-              </td>
             </tr>
             <% } %>
           </tbody>
@@ -92,6 +81,17 @@
         <input type="text" name="commentContent" class="text_field" />
         <button type="submit">Submit</button>
       </form>
+      <!-- liking posts -->
+      <% for (let u = 0; u < content.length; u++) { %>
+      <form action="/admin/get-in" method="GET">
+        <input type="hidden" name="myUserId" value="<%= userId %>" />
+        <input type="hidden" name="postId" value="<%= content[u].id %>" />
+        <button type="submit">
+          Like/Unlike post number <%= content[u].id %> from <%=
+          content[u].author.username %>
+        </button>
+      </form>
+      <% } %>
     </div>
     <% } %>
 
