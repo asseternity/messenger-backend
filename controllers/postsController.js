@@ -90,6 +90,10 @@ const postLikeAPost = async (req, res, next) => {
           },
         },
       });
+      // if no req.user, render the get-in page
+      if (!req.user) {
+        return res.render("pw");
+      }
       return res.status(200).json({ message: "Post liked successfully" });
     }
   } catch (err) {
