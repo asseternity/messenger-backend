@@ -158,7 +158,7 @@ const postNewConversation = async (req, res, next) => {
         await prisma.message.create({
           data: {
             conversationId: fullConversation.id,
-            senderId: req.body.userId,
+            senderId: parseInt(req.body.userId),
             content: req.body.content,
           },
         });
