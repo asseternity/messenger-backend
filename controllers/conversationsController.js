@@ -159,7 +159,7 @@ const postNewConversation = async (req, res, next) => {
           data: {
             conversationId: fullConversation.id,
             senderId: parseInt(req.body.userId),
-            content: req.body.content,
+            content: "Conversation started",
           },
         });
         return res.render("pw");
