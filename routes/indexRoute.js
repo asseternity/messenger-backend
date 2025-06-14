@@ -49,6 +49,7 @@ indexRoute.get(
 );
 indexRoute.post(
   "/new-message",
+  verifyToken,
   restrictGuest,
   conversationsController.postNewMessage
 );
