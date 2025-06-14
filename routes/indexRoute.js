@@ -74,11 +74,16 @@ indexRoute.post(
 );
 
 // posts routes
-indexRoute.post("/new_post", restrictGuest, postsController.postWriteAPost);
+indexRoute.post(
+  "/new_post",
+  verifyToken,
+  restrictGuest,
+  postsController.postWriteAPost
+);
 indexRoute.post(
   "/update_post",
-  restrictGuest,
   verifyToken,
+  restrictGuest,
   postsController.updateEditAPost
 );
 indexRoute.post("/like_post", postsController.postLikeAPost);
